@@ -55,3 +55,40 @@
   animation: crtFlicker 0.15s infinite;
   z-index: 20;
 }
+/* command bar: always visible at bottom of screen */
+.command-bar {
+  position: fixed;       /* lock to viewport */
+  bottom: 8px;           /* a little spacing from bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;          /* above everything else */
+  width: 90vw;           /* nearly full width on mobile */
+  max-width: 400px;      /* same as desktop */
+  box-sizing: border-box;
+}
+
+.command-bar input {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;       /* larger on mobile */
+  background: #000;
+  color: #0F0;
+  font-family: monospace;
+  border: 1px solid #0F0;
+  outline: none;
+}
+
+/* fallback terminal area: leave room for fixed input */
+.terminal-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* subtract input height + margin (about 60px) so it's never under it */
+  height: calc(100% - 60px);
+  padding: 16px;
+  background: #000;
+  color: #0F0;
+  font-family: monospace;
+  overflow-y: auto;
+}

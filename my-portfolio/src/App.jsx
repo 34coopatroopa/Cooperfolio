@@ -15,43 +15,38 @@ const HEADER = 'Welcome! Type "help" and press Enter.'
 
 function BootScreen() {
   return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0, left: 0,
-        width: '100vw', height: '100vh',
-        background: '#000',
-        color: '#0F0',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'monospace',
-        fontSize: '24px',
-        zIndex: 100,
-      }}
-    >
+    <div className="boot-screen">
       Loading Coop‑OS...
     </div>
   )
 }
 
-const container = document.getElementById('root')
-createRoot(container).render(<App />)
-
-export default function App() {
+function App() {
   const controlsRef = useRef()
   const [booting, setBooting] = useState(true)
+  const [isMobile, setMobile] = useState(false)
   const [output, setOutput] = useState([HEADER])
   const [isRetro, setRetro] = useState(false)
   const [flashEyes, setFlashEyes] = useState(false)
   const [isDestroyed, setDestroyed] = useState(false)
 
-  // show boot screen for 2s
+  // 1) Boot screen for 2s
   useEffect(() => {
     const t = setTimeout(() => setBooting(false), 2000)
     return () => clearTimeout(t)
   }, [])
 
+  // 2) Detect mobile on mount & resize
+  useEffect(() => {
+    function onResize() {
+      setMobile(window.innerWidth < 768)
+    }
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // 3) All your commands
   const commands = {
     help: [
       'Commands available:',
@@ -63,11 +58,11 @@ export default function App() {
       '  projects    – what I’ve built',
       '  skills      – my skillset',
       '  clear       – reset terminal',
+      '  linkedin    – open LinkedIn profile',
     ],
     about: [
       'Cooper Hoy',
-      'Cybersecurity Engineering student.',
-      'Iowa State University',
+      'Cybersecurity Engineering student at Iowa State University',
       'Based in Ames, Iowa',
     ],
     contact: [
@@ -76,19 +71,16 @@ export default function App() {
       'LinkedIn: linkedin.com/in/cooperhoy',
     ],
     education: [
-      'BA in Cybersecurity Engineering', 
+      'BA in Cybersecurity Engineering',
       'Iowa State University',
       'Expected Graduation: May 2027',
     ],
     experience: [
-      'IT Infrastructure Engineer',
-      'IT Support Specialist',
-      '---------------------',
+      'IT Infrastructure Engineer @ ISU (2024–2025)',
+      'IT Support Specialist (2023–2025)',
       'Configured & deployed Windows Servers',
       'Built AD‑clone sandbox',
       'Developed hardening GPOs',
-      'Automated Tasks via. Powershell',
-      'DNS and Subnet Adjustments'
     ],
     projects: [
       'W@v3 Encryption Software (Python)',
@@ -108,16 +100,19 @@ export default function App() {
       '♪ Never gonna run around and desert you',
     ],
     whoami: [
-      'You are a curious developer...', 
-      'exploring my 3D portfolio terminal!',
+      'You are a curious developer exploring my 3D portfolio terminal!',
     ],
     destroy: ['💥 Boom! The monitor is shattered!'],
+    linkedin: [
+      'Opening LinkedIn…',
+    ],
     'sudo rm -rf /': [
       'Error: Permission denied.',
-       'This portfolio is safe from wipes! 🌱',
+      'This portfolio is safe from wipes! 🌱',
     ],
   }
 
+  // 4) Handle commands
   function onCommand(cmd) {
     if (!cmd) return
     const key = cmd.toLowerCase()
@@ -146,6 +141,11 @@ export default function App() {
       setOutput([`$ ${cmd}`, ...commands.destroy])
       return
     }
+    if (key === 'linkedin') {
+      window.open('https://linkedin.com/in/cooperhoy', '_blank')
+      setOutput([`$ ${cmd}`, ...commands.linkedin])
+      return
+    }
 
     const resp = commands[key] || [
       `Unknown command: "${cmd}". Type "help".`,
@@ -153,6 +153,7 @@ export default function App() {
     setOutput([`$ ${cmd}`, ...resp])
   }
 
+  // 5) Center view (kill momentum)
   function centerView() {
     const ctrl = controlsRef.current
     if (ctrl) {
@@ -164,113 +165,96 @@ export default function App() {
     }
   }
 
-  // If we’re still booting, show only the splash
+  // 6) Render boot screen until done
   if (booting) {
     return <BootScreen />
   }
 
+  // 7) Main UI
   return (
     <>
-      <div
-        style={{
-          position: 'absolute',
-          top: 0, left: 0,
-          width: '100vw', height: '100vh',
-          background: isRetro
-            ? 'linear-gradient(135deg, pink 0%, purple 100%)'
-            : '#000',
-          overflow: 'hidden',
-          filter: isRetro
-            ? 'contrast(200%) brightness(140%) saturate(200%) hue-rotate(-10deg) blur(0.8px)'
-            : 'none',
-        }}
-      >
+      <div className="app-container" style={{
+        background: isRetro
+          ? 'linear-gradient(135deg, pink 0%, purple 100%)'
+          : '#000',
+        filter: isRetro
+          ? 'contrast(200%) brightness(140%) saturate(200%) hue-rotate(-10deg) blur(0.8px)'
+          : 'none',
+      }}>
         {flashEyes && (
           <div className="flash-eyes">
             <img src="/eyes.png" alt="Scary eyes" />
           </div>
         )}
 
-        <button
-          onClick={centerView}
-          style={{
-            position: 'absolute',
-            top: '16px', right: '16px', zIndex: 10,
-            padding: '8px 12px', background: '#8B0000',
-            color: '#FFF', border: 'none', borderRadius: 4,
-            cursor: 'pointer',
-          }}
-        >
-          Center
-        </button>
+        {/* Center button (desktop only) */}
+        {!isMobile && (
+          <button className="center-button" onClick={centerView}>
+            Center
+          </button>
+        )}
 
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '20px', left: '50%',
-            transform: 'translateX(-50%)', zIndex: 10,
-          }}
-        >
-          <input
-            placeholder="Type command and press Enter"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                onCommand(e.target.value.trim())
-                e.target.value = ''
-              }
-            }}
-            style={{
-              padding: '8px',
-              fontSize: '14px',
-              width: '400px',
-              background: '#000',
-              color: '#0F0',
-              fontFamily: 'monospace',
-              border: '1px solid #0F0',
-            }}
-          />
-        </div>
+        {/* 3D Canvas on desktop, 2D fallback on mobile */}
+        {!isMobile ? (
+          <Canvas
+            shadows
+            camera={{ position: [0, 0, 5], fov: 45 }}
+            gl={{ antialias: false }}
+            dpr={1}
+          >
+            <ambientLight intensity={0.8} />
+            <hemisphereLight skyColor="#222" groundColor="#000" intensity={0.1} />
+            <directionalLight castShadow position={[5, 10, 5]} intensity={1} />
+            <ContactShadows
+              rotation-x={Math.PI / 2}
+              position={[0, -2, 0]}
+              opacity={0.4} width={10} height={10} blur={2}
+            />
 
-        <Canvas
-          shadows
-          camera={{ position: [0, 0, 5], fov: 45 }}
-          gl={{ antialias: true }}
-          dpr={[1, 2]}
-        >
-          <ambientLight intensity={0.8} />
-          <hemisphereLight
-            skyColor="#222222" groundColor="#000000" intensity={0.1}
-          />
-          <directionalLight
-            castShadow position={[5, 10, 5]} intensity={1}
-          />
-          <ContactShadows
-            rotation-x={Math.PI / 2}
-            position={[0, -2, 0]}
-            opacity={0.4} width={10} height={10} blur={2}
-          />
+            <MonitorWithTexture
+              output={output}
+              isRetro={isRetro}
+              isDestroyed={isDestroyed}
+            />
 
-          <MonitorWithTexture
-            output={output}
-            isRetro={isRetro}
-            isDestroyed={isDestroyed}
-          />
+            <OrbitControls
+              ref={controlsRef}
+              enablePan={false}
+              enableRotate
+              enableZoom
+              enableDamping
+              dampingFactor={0.1}
+            />
 
-          <OrbitControls
-            ref={controlsRef}
-            enablePan={false}
-            enableRotate
-            enableZoom
-            enableDamping
-            dampingFactor={0.1}
-          />
-
-          <Environment preset="studio" background={false} />
-        </Canvas>
+            <Environment preset="studio" background={false} />
+          </Canvas>
+        ) : (
+          <div className="terminal-fallback">
+            {output.map((line, i) => (
+              <div key={i}>{line}</div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Analytics must live outside of the <Canvas> */}
+      {/* Fixed command bar at bottom */}
+      <div className="command-bar">
+        <input
+          placeholder="Type command and press Enter"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              onCommand(e.target.value.trim())
+              e.target.value = ''
+            }
+          }}
+        />
+      </div>
+
+      {/* Analytics */}
       <Analytics />
     </>
   )
 }
+
+const root = document.getElementById('root')
+createRoot(root).render(<App />)
