@@ -63,12 +63,6 @@ export default function App() {
       '  projects    – what I’ve built',
       '  skills      – my skillset',
       '  clear       – reset terminal',
-      '  retro       – toggle retro mode',
-      '  bob         – summon BOB!',
-      '  rickroll    – surprise song snippet',
-      '  whoami      – who are you?',
-      '  destroy     – smash the monitor',
-      '  sudo rm -rf /– watch me refuse',
     ],
     about: [
       'Cooper Hoy',
