@@ -21,7 +21,7 @@ function BootScreen() {
   )
 }
 
-export default function App() {
+function App() {
   const controlsRef = useRef()
   const [booting, setBooting] = useState(true)
   const [isMobile, setMobile] = useState(false)
@@ -258,3 +258,5 @@ export default function App() {
 
 const root = document.getElementById('root')
 createRoot(root).render(<App />)
+// at the end of src/App.jsx
+export default App
