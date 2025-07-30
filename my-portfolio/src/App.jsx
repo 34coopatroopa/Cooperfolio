@@ -91,7 +91,8 @@ export default function App() {
       'DNS and Subnet Adjustments'
     ],
     projects: [
-      'W@v3 Encryption Library (Python)',
+      'W@v3 Encryption Software (Python)',
+      'visit wav3.fit :)',
       'HelpLLama AI Help‑desk Chat‑bot',
       'Roomba “Multi Function” Robot',
     ],
@@ -112,7 +113,8 @@ export default function App() {
     ],
     destroy: ['💥 Boom! The monitor is shattered!'],
     'sudo rm -rf /': [
-      'Error: Permission denied. This portfolio is safe from wipes! 🌱',
+      'Error: Permission denied.',
+       'This portfolio is safe from wipes! 🌱',
     ],
   }
 
