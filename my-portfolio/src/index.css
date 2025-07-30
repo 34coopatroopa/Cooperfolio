@@ -58,7 +58,7 @@
 /* command bar: always visible at bottom of screen */
 .command-bar {
   position: fixed;       /* lock to viewport */
-  bottom: 8px;           /* a little spacing from bottom */
+  bottom: 20px;           /* a little spacing from bottom */
   left: 50%;
   transform: translateX(-50%);
   z-index: 999;          /* above everything else */
@@ -69,7 +69,6 @@
 
 .command-bar input {
   position: fixed;
-  bottom: 8px;
   width: 100%;
   padding: 8px;
   font-size: 16px;       /* larger on mobile */
