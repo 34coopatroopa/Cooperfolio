@@ -55,16 +55,25 @@
   animation: crtFlicker 0.15s infinite;
   z-index: 20;
 }
-/* command bar: always visible at bottom of screen */
 .command-bar {
-  position: fixed;       /* lock to viewport */
-  bottom: 20px;           /* a little spacing from bottom */
+  position: fixed;
+  /* push up out of the home‑indicator/safe-area */
+  bottom: calc(env(safe-area-inset-bottom) + 8px);
   left: 50%;
   transform: translateX(-50%);
-  z-index: 999;          /* above everything else */
-  width: 90vw;           /* nearly full width on mobile */
-  max-width: 400px;      /* same as desktop */
+  z-index: 999;
+  width: 90vw;
+  max-width: 400px;
   box-sizing: border-box;
+}
+
+/* and ensure your app container doesn’t underlay the input */
+.app-container {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 60px);
+  overflow: hidden;
 }
 
 .command-bar input {
