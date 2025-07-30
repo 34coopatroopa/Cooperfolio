@@ -18,10 +18,8 @@ function BootScreen() {
     <div
       style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
+        top: 0, left: 0,
+        width: '100vw', height: '100vh',
         background: '#000',
         color: '#0F0',
         display: 'flex',
@@ -65,13 +63,17 @@ export default function App() {
       '  projects    – what I’ve built',
       '  skills      – my skillset',
       '  clear       – reset terminal',
+      '  retro       – toggle retro mode',
+      '  bob         – summon BOB!',
+      '  rickroll    – surprise song snippet',
+      '  whoami      – who are you?',
+      '  destroy     – smash the monitor',
+      '  sudo rm -rf /– watch me refuse',
     ],
     about: [
       'Cooper Hoy',
-      'Cybersecurity Engineering student.', 
-      'at Iowa State University',
+      'Cybersecurity Engineering student at Iowa State University',
       'Based in Ames, Iowa',
-      'I love Hiking, Playing Frisbee, and Drawing',
     ],
     contact: [
       'Phone: +1 319‑240‑3504',
@@ -79,26 +81,25 @@ export default function App() {
       'LinkedIn: linkedin.com/in/cooperhoy',
     ],
     education: [
-      'BA in Cybersecurity Engineering', 
-      'Iowa State University',
+      'BA in Cybersecurity Engineering, Iowa State University',
       'Expected Graduation: May 2027',
     ],
     experience: [
-      'IT Infrastructure Engineer',
-      'IT Support Specialist',
-      'Configured & deployed Windows Servers',
-      'Built AD‑clone testing sandbox',
+      'IT Infrastructure Engineer @ ISU (2024–2025)',
+      'IT Support Specialist (2023–2025)',
+      'Configured & deployed Windows Server 2025',
+      'Built AD‑clone sandbox',
       'Developed hardening GPOs',
     ],
     projects: [
       'W@v3 Encryption Library (Python)',
       'HelpLLama AI Help‑desk Chat‑bot',
-      'Roomba "Multi Function" Robot',
+      'Roomba “Multi Function” Robot',
     ],
     skills: [
-      'Python • AD • Exchange • PowerShell',
+      'Python • React • Three.js • PowerShell',
       'Windows • Linux • VMware • Intune',
-      'Cryptography • Github • Troubleshooting',
+      'Cryptography • GitHub • Troubleshooting',
     ],
     bob: ['You’ve summoned BOB…', '…and now you SEE him!'],
     rickroll: [
@@ -161,17 +162,18 @@ export default function App() {
     }
   }
 
+  // If we’re still booting, show only the splash
+  if (booting) {
+    return <BootScreen />
+  }
+
   return (
     <>
-      {booting && <BootScreen />}
-
       <div
         style={{
           position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
+          top: 0, left: 0,
+          width: '100vw', height: '100vh',
           background: isRetro
             ? 'linear-gradient(135deg, pink 0%, purple 100%)'
             : '#000',
@@ -191,14 +193,9 @@ export default function App() {
           onClick={centerView}
           style={{
             position: 'absolute',
-            top: '16px',
-            right: '16px',
-            zIndex: 10,
-            padding: '8px 12px',
-            background: '#8B0000',
-            color: '#FFF',
-            border: 'none',
-            borderRadius: 4,
+            top: '16px', right: '16px', zIndex: 10,
+            padding: '8px 12px', background: '#8B0000',
+            color: '#FFF', border: 'none', borderRadius: 4,
             cursor: 'pointer',
           }}
         >
@@ -208,10 +205,8 @@ export default function App() {
         <div
           style={{
             position: 'absolute',
-            bottom: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 10,
+            bottom: '20px', left: '50%',
+            transform: 'translateX(-50%)', zIndex: 10,
           }}
         >
           <input
@@ -242,22 +237,15 @@ export default function App() {
         >
           <ambientLight intensity={0.8} />
           <hemisphereLight
-            skyColor="#222222"
-            groundColor="#000000"
-            intensity={0.1}
+            skyColor="#222222" groundColor="#000000" intensity={0.1}
           />
           <directionalLight
-            castShadow
-            position={[5, 10, 5]}
-            intensity={1}
+            castShadow position={[5, 10, 5]} intensity={1}
           />
           <ContactShadows
             rotation-x={Math.PI / 2}
             position={[0, -2, 0]}
-            opacity={0.4}
-            width={10}
-            height={10}
-            blur={2}
+            opacity={0.4} width={10} height={10} blur={2}
           />
 
           <MonitorWithTexture
@@ -278,6 +266,9 @@ export default function App() {
           <Environment preset="studio" background={false} />
         </Canvas>
       </div>
+
+      {/* Analytics must live outside of the <Canvas> */}
+      <Analytics />
     </>
   )
 }
