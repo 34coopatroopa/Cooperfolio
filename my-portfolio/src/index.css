@@ -56,7 +56,7 @@
   z-index: 20;
 }
 .command-bar {
-  position: fixed;
+  position: absolute;
   /* push up out of the home‑indicator/safe-area */
   bottom: calc(env(safe-area-inset-bottom) + 8px);
   left: 50%;
