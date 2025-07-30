@@ -21,7 +21,7 @@ function BootScreen() {
   )
 }
 
-function App() {
+export default function App() {
   const controlsRef = useRef()
   const [booting, setBooting] = useState(true)
   const [isMobile, setMobile] = useState(false)
