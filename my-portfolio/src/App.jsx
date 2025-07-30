@@ -23,19 +23,23 @@ export default function App() {
   const commands = {
     help: [
       'Commands available:',
-      '  help         – this menu',
-      '  about        – who I am',
-      '  contact      – how to reach me',
-      '  education    – my degree & graduation',
-      '  experience   – professional highlights',
-      '  projects     – what I’ve built',
-      '  skills       – my skillset',
-      '  clear        – reset terminal',
+      '  help        – this menu',
+      '  about       – who I am',
+      '  contact     – how to reach me',
+      '  education   – my degree & graduation',
+      '  experience  – professional highlights',
+      '  projects    – what I’ve built',
+      '  skills      – my skillset',
+      '  bob         – summon BOB!',
+      '  rickroll    – surprise song snippet',
+      '  whoami      – who are you?',
+      '  sudo rm -rf /– watch me refuse',
+      '  retro       – toggle retro mode',
+      '  clear       – reset terminal',
     ],
     about: [
       'Cooper Hoy',
-      'Cybersecurity Engineering student.',
-      'Iowa State University',
+      'Cybersecurity Engineering student at Iowa State University',
       'Based in Ames, Iowa',
     ],
     contact: [
@@ -44,27 +48,26 @@ export default function App() {
       'LinkedIn: linkedin.com/in/cooperhoy',
     ],
     education: [
-      'BA in Cybersecurity Engineering,',
-      'Iowa State University',
+      'BA in Cybersecurity Engineering, Iowa State University',
       'Expected Graduation: May 2027',
     ],
     experience: [
-      'IT Infrastructure Engineer',
-      'IT Support Specialist',
-      'Configured & deployed Windows Server',
+      'IT Infrastructure Engineer @ ISU (2024–2025)',
+      'IT Support Specialist (2023–2025)',
+      'Configured & deployed Windows Server 2025 in hypervisor',
       'Built AD‑clone testing sandbox for new products',
       'Developed hardening GPOs for security baseline',
     ],
     projects: [
       'W@v3 Encryption Library (Python)',
       'HelpLLama AI Help‑desk Chat‑bot',
-      'Disaster Recovery Failover Datastore Organizer',
-      'Roomba "Bomb Defusal" Robot',
+      'SentinelAI Proxy (Node.js)',
+      'BetterMap Scanner (React, Three.js)',
     ],
     skills: [
-      'Python • AD • Exchange • PowerShell',
-      'Windows • Linux • VMware • Registry',
-      'Cryptography • Bash • Troubleshooting',
+      'Python • React • Three.js • PowerShell',
+      'Windows • Linux • VMware • ServiceNow',
+      'Cryptography • DevOps • Troubleshooting',
     ],
     bob: [
       'You’ve summoned BOB…',
@@ -76,11 +79,10 @@ export default function App() {
       '♪ Never gonna run around and desert you',
     ],
     whoami: [
-      'You are a curious person exploring my 3D portfolio terminal!',
+      'You are a curious developer exploring my 3D portfolio terminal!',
     ],
     'sudo rm -rf /': [
-      'Error: Permission denied.', 
-      'This portfolio is safe from wipes! 🌱',
+      'Error: Permission denied. This portfolio is safe from wipes! 🌱',
     ],
   }
 
@@ -116,14 +118,8 @@ export default function App() {
       // Temporarily disable damping to kill momentum
       const prevDamping = ctrl.enableDamping
       ctrl.enableDamping = false
-
-      // Reset to saved state (initial camera/target)
       ctrl.reset()
-
-      // Force an update so the reset takes immediate effect
       ctrl.update()
-
-      // Restore damping for smooth future interactions
       ctrl.enableDamping = prevDamping
     }
   }
@@ -132,9 +128,13 @@ export default function App() {
     <div
       style={{
         position: 'absolute',
-        top: 0, left: 0,
-        width: '100vw', height: '100vh',
-        background: isRetro ? 'pink' : '#000',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        background: isRetro
+          ? 'linear-gradient(135deg, pink 0%, purple 100%)'
+          : '#000',
         overflow: 'hidden',
         filter: isRetro
           ? 'contrast(200%) brightness(140%) saturate(200%) hue-rotate(-10deg) blur(0.8px)'
@@ -152,9 +152,14 @@ export default function App() {
         onClick={centerView}
         style={{
           position: 'absolute',
-          top: '16px', right: '16px', zIndex: 10,
-          padding: '8px 12px', background: '#8B0000',
-          color: '#FFF', border: 'none', borderRadius: 4,
+          top: '16px',
+          right: '16px',
+          zIndex: 10,
+          padding: '8px 12px',
+          background: '#8B0000',
+          color: '#FFF',
+          border: 'none',
+          borderRadius: 4,
           cursor: 'pointer',
         }}
       >
@@ -165,8 +170,10 @@ export default function App() {
       <div
         style={{
           position: 'absolute',
-          bottom: '20px', left: '50%',
-          transform: 'translateX(-50%)', zIndex: 10,
+          bottom: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10,
         }}
       >
         <input
@@ -197,15 +204,18 @@ export default function App() {
       >
         <ambientLight intensity={0.8} />
         <hemisphereLight
-          skyColor="#222222" groundColor="#000000" intensity={0.1}
+          skyColor="#222222"
+          groundColor="#000000"
+          intensity={0.1}
         />
-        <directionalLight
-          castShadow position={[5, 10, 5]} intensity={1}
-        />
+        <directionalLight castShadow position={[5, 10, 5]} intensity={1} />
         <ContactShadows
           rotation-x={Math.PI / 2}
           position={[0, -2, 0]}
-          opacity={0.4} width={10} height={10} blur={2}
+          opacity={0.4}
+          width={10}
+          height={10}
+          blur={2}
         />
 
         <MonitorWithTexture output={output} isRetro={isRetro} />
