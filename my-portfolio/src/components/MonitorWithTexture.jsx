@@ -126,4 +126,25 @@ export default function MonitorWithTexture({
       </mesh>
     </group>
   )
+  return (
+    <group>
+      {/* Bezel omitted for brevity … */}
+
+      {/* SCREEN PLANE: attach onPointerDown */}
+      <mesh
+        position={[0, 0, D / 2 + 0.001]}
+        onPointerDown={(e) => {
+          e.stopPropagation()         // prevent OrbitControls from also rotating
+          onScreenClick?.()           // focus input
+        }}
+      >
+        <planeGeometry args={[W, H]} />
+        <meshBasicMaterial map={texture} />
+        <Edges color={isRetro ? '#0F0' : '#00AA00'} />
+      </mesh>
+
+      {/* Stand + base omitted … */}
+    </group>
+  )
 }
+

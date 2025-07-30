@@ -68,6 +68,8 @@
 }
 
 .command-bar input {
+  position: fixed;
+  bottom: 8px;
   width: 100%;
   padding: 8px;
   font-size: 16px;       /* larger on mobile */
