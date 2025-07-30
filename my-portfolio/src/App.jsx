@@ -66,7 +66,8 @@ export default function App() {
     ],
     about: [
       'Cooper Hoy',
-      'Cybersecurity Engineering student at Iowa State University',
+      'Cybersecurity Engineering student.',
+      'Iowa State University',
       'Based in Ames, Iowa',
     ],
     contact: [
@@ -75,15 +76,19 @@ export default function App() {
       'LinkedIn: linkedin.com/in/cooperhoy',
     ],
     education: [
-      'BA in Cybersecurity Engineering, Iowa State University',
+      'BA in Cybersecurity Engineering', 
+      'Iowa State University',
       'Expected Graduation: May 2027',
     ],
     experience: [
-      'IT Infrastructure Engineer @ ISU (2024–2025)',
-      'IT Support Specialist (2023–2025)',
-      'Configured & deployed Windows Server 2025',
+      'IT Infrastructure Engineer',
+      'IT Support Specialist',
+      '---------------------',
+      'Configured & deployed Windows Servers',
       'Built AD‑clone sandbox',
       'Developed hardening GPOs',
+      'Automated Tasks via. Powershell',
+      'DNS and Subnet Adjustments'
     ],
     projects: [
       'W@v3 Encryption Library (Python)',
@@ -91,7 +96,7 @@ export default function App() {
       'Roomba “Multi Function” Robot',
     ],
     skills: [
-      'Python • React • Three.js • PowerShell',
+      'Python • AD • Exchange • PowerShell',
       'Windows • Linux • VMware • Intune',
       'Cryptography • GitHub • Troubleshooting',
     ],
@@ -102,7 +107,8 @@ export default function App() {
       '♪ Never gonna run around and desert you',
     ],
     whoami: [
-      'You are a curious developer exploring my 3D portfolio terminal!',
+      'You are a curious developer...', 
+      'exploring my 3D portfolio terminal!',
     ],
     destroy: ['💥 Boom! The monitor is shattered!'],
     'sudo rm -rf /': [
