@@ -55,39 +55,47 @@
   animation: crtFlicker 0.15s infinite;
   z-index: 20;
 }
-.command-bar {
-  position: absolute;
-  /* push up out of the home‑indicator/safe-area */
-  bottom: calc(env(safe-area-inset-bottom) + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 999;
-  width: 90vw;
-  max-width: 400px;
-  box-sizing: border-box;
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
-/* and ensure your app container doesn’t underlay the input */
+/* 2. Let the app container pad itself above the home‑indicator */
 .app-container {
   position: absolute;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
-  padding-bottom: calc(env(safe-area-inset-bottom) + 60px);
+  /* leave space at the bottom equal to the safe‐area height + 60px (input height) */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 60px);
   overflow: hidden;
 }
 
-.command-bar input {
+/* 3. Command‑bar fixed at bottom, above the safe area */
+.command-bar {
   position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: env(safe-area-inset-bottom, 8px);
+  z-index: 1000;
+  width: 90vw;
+  max-width: 400px;
+  box-sizing: border-box;
+  padding-bottom: 8px; /* extra space under the input itself */
+}
+
+.command-bar input {
   width: 100%;
   padding: 8px;
-  font-size: 16px;       /* larger on mobile */
+  font-size: 16px;
   background: #000;
   color: #0F0;
   font-family: monospace;
   border: 1px solid #0F0;
   outline: none;
+  box-sizing: border-box;
 }
-
 /* fallback terminal area: leave room for fixed input */
 .terminal-fallback {
   position: absolute;
