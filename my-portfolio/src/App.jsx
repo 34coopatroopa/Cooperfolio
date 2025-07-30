@@ -1,5 +1,5 @@
 // src/App.jsx
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 import React, { useRef, useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Canvas } from '@react-three/fiber'
