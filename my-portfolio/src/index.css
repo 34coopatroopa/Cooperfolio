@@ -85,17 +85,25 @@ html, body {
   padding-bottom: 8px; /* extra space under the input itself */
 }
 
-.command-bar input {
-  width: 100%;
-  padding: 8px;
-  font-size: 16px;
-  background: #000;
-  color: #0F0;
-  font-family: monospace;
-  border: 1px solid #0F0;
-  outline: none;
+.command-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: env(safe-area-inset-bottom, 8px);
+  z-index: 1000;
   box-sizing: border-box;
+  padding-bottom: 8px;
+  /* use clamp(minimum, preferred, maximum) */
+  width: clamp(280px, 90vw, 400px);
 }
+
+/* Optional: if you want it truly edge-to-edge on tiny phones: */
+@media (max-width: 360px) {
+  .command-bar {
+    width: calc(100% - 16px); /* 8px margin each side */
+  }
+}
+
 /* fallback terminal area: leave room for fixed input */
 .terminal-fallback {
   position: absolute;
