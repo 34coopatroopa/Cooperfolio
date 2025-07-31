@@ -1,24 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Ensure full-screen on mobile -->
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/bart.png" />
+
+    <!-- Ensure proper mobile scaling & full-screen safe area -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
-    <!-- Your favicon -->
-    <link rel="icon" href="/favicon.ico?v=2" />
+    <!-- Prevent aggressive caching of the HTML itself -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma"        content="no-cache" />
+    <meta http-equiv="Expires"       content="0" />
 
-    <!-- (Optionally) add a meta version you can read in JS -->
-
-
-    <!-- If you have a CSS file, bump V= each time you update too -->
-    <link rel="stylesheet" href="/index.css?v=1.0.3" />
+    <title>Cooper Hoy</title>
   </head>
   <body>
     <div id="root"></div>
-
-    <!-- This is your entrypoint—add ?v= here on each deploy -->
-    <script type="module" src="/src/main.jsx?v=1.0.3"></script>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
