@@ -73,36 +73,35 @@ html, body {
 }
 
 /* 3. Command‑bar fixed at bottom, above the safe area */
+/* Command bar always fixed at bottom, responsive width */
 .command-bar {
   position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: env(safe-area-inset-bottom, 8px);
-  z-index: 1000;
-  width: 90vw;
-  max-width: 400px;
+  left: 0; right: 0;
+  /* Fallback to 12px bottom on browsers that don’t support env() */
+  bottom: env(safe-area-inset-bottom, 12px);
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  z-index: 1001;
   box-sizing: border-box;
-  padding-bottom: 8px; /* extra space under the input itself */
 }
 
-.command-bar {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: env(safe-area-inset-bottom, 8px);
-  z-index: 1000;
-  box-sizing: border-box;
-  padding-bottom: 8px;
-  /* use clamp(minimum, preferred, maximum) */
-  width: clamp(280px, 90vw, 400px);
+/* The input itself */
+.command-bar input {
+  width: 100%;
+  max-width: 600px;         /* don’t get too wide on tablets */
+  padding: 14px 16px;       /* bigger tap area */
+  font-size: 18px;          /* legible on small screens */
+  background: rgba(0,0,0,0.85);
+  color: #0F0;
+  font-family: monospace;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  touch-action: manipulation;     /* improve tap response */
+  -webkit-appearance: none;       /* iOS Safari reset */
 }
 
-/* Optional: if you want it truly edge-to-edge on tiny phones: */
-@media (max-width: 360px) {
-  .command-bar {
-    width: calc(100% - 16px); /* 8px margin each side */
-  }
-}
 
 /* fallback terminal area: leave room for fixed input */
 .terminal-fallback {
