@@ -1,42 +1,47 @@
+/* src/App.css */
+/* make the canvas fill & hide overflow */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* fixed bottom command input */
+.command-bar {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: env(safe-area-inset-bottom, 12px);
+  padding: 8px 16px;
+  background: rgba(0,0,0,0.8);
+  box-sizing: border-box;
+  z-index: 1000;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* mobile-friendly input styling */
+.command-bar input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 18px;
+  font-family: monospace;
+  background: #111;
+  color: #0F0;
+  border: 1px solid #0F0;
+  border-radius: 4px;
+  touch-action: manipulation;
+  -webkit-appearance: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+/* simple boot screen */
+.boot-screen {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #000;
+  color: #0F0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 24px;
+  z-index: 100;
 }

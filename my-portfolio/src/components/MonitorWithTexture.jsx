@@ -6,6 +6,7 @@ export default function MonitorWithTexture({
   output,
   isRetro,
   isDestroyed,
+  onScreenClick,   // ← new prop
 }) {
   // 1️⃣ Offscreen canvas
   const canvas = useMemo(() => {
@@ -15,7 +16,7 @@ export default function MonitorWithTexture({
     return c
   }, [])
 
-  // 2️⃣ Texture
+  // 2️⃣ CanvasTexture
   const texture = useMemo(() => {
     const tex = new THREE.CanvasTexture(canvas)
     tex.minFilter = THREE.LinearFilter
@@ -24,15 +25,13 @@ export default function MonitorWithTexture({
     return tex
   }, [canvas])
 
-  // 3️⃣ Draw each frame
+  // 3️⃣ Draw terminal or cracks
   useEffect(() => {
     const ctx = canvas.getContext('2d')
-    // clear to black
     ctx.fillStyle = 'black'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     if (isDestroyed) {
-      // draw random cracks
       ctx.strokeStyle = isRetro ? '#FFFDD0' : '#888'
       ctx.lineWidth = 2
       for (let i = 0; i < 10; i++) {
@@ -49,14 +48,12 @@ export default function MonitorWithTexture({
       return
     }
 
-    // normal terminal rendering
     const fontSize = 14
     const lineHeight = 18
     const margin = 8
     ctx.font = `${fontSize}px monospace`
     ctx.fillStyle = '#00FF00'
 
-    // wrap long lines
     const maxChars = Math.floor((canvas.width - margin * 2) / (fontSize * 0.6))
     const wrapped = []
     output.forEach((line) => {
@@ -65,7 +62,6 @@ export default function MonitorWithTexture({
       }
     })
 
-    // how many rows fit?
     const topOffset = 20
     const maxRows = Math.floor((canvas.height - topOffset - margin) / lineHeight)
     const toDraw = wrapped.slice(-maxRows)
@@ -75,17 +71,13 @@ export default function MonitorWithTexture({
       ctx.fillText(l, margin, y)
       y += lineHeight
     })
-    // prompt
     ctx.fillText('$ ', margin, y)
 
     texture.needsUpdate = true
   }, [output, canvas, texture, isDestroyed, isRetro])
 
-  // monitor geometry
-  const W = 4,
-    H = 2.5,
-    D = 0.05,
-    bezel = 0.1
+  // 4️⃣ Monitor geometry constants
+  const W = 4, H = 2.5, D = 0.05, bezel = 0.1
   const bezelColor = isRetro ? '#FFFDD0' : '#444444'
 
   return (
@@ -98,19 +90,21 @@ export default function MonitorWithTexture({
         castShadow
         receiveShadow
       >
-        <meshStandardMaterial
-          color={bezelColor}
-          metalness={0.6}
-          roughness={0.3}
-        />
+        <meshStandardMaterial color={bezelColor} metalness={0.6} roughness={0.3} />
         <Edges color="#888888" />
       </RoundedBox>
 
-      {/* Screen plane */}
-      <mesh position={[0, 0, D / 2 + 0.001]}>
+      {/* Screen – clickable to focus input */}
+      <mesh
+        position={[0, 0, D / 2 + 0.001]}
+        onPointerDown={(e) => {
+          e.stopPropagation()
+          onScreenClick && onScreenClick()
+        }}
+      >
         <planeGeometry args={[W, H]} />
         <meshBasicMaterial map={texture} />
-        <Edges color="#00AA00" />
+        <Edges color={isRetro ? '#0F0' : '#00AA00'} />
       </mesh>
 
       {/* Stand neck */}
@@ -126,25 +120,4 @@ export default function MonitorWithTexture({
       </mesh>
     </group>
   )
-  return (
-    <group>
-      {/* Bezel omitted for brevity … */}
-
-      {/* SCREEN PLANE: attach onPointerDown */}
-      <mesh
-        position={[0, 0, D / 2 + 0.001]}
-        onPointerDown={(e) => {
-          e.stopPropagation()         // prevent OrbitControls from also rotating
-          onScreenClick?.()           // focus input
-        }}
-      >
-        <planeGeometry args={[W, H]} />
-        <meshBasicMaterial map={texture} />
-        <Edges color={isRetro ? '#0F0' : '#00AA00'} />
-      </mesh>
-
-      {/* Stand + base omitted … */}
-    </group>
-  )
 }
-

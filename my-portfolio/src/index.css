@@ -5,6 +5,14 @@
   0%, 100% { opacity: 0; }
   50%     { opacity: 1; }
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  /* allow vertical scrolling when content (or keyboard) expands */
+  overflow-y: auto;
+}
+
 
 .flash-eyes {
   position: absolute;
@@ -55,36 +63,10 @@
   animation: crtFlicker 0.15s infinite;
   z-index: 20;
 }
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
-}
+
 
 /* 2. Let the app container pad itself above the home‑indicator */
-.app-container {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  /* leave space at the bottom equal to the safe‐area height + 60px (input height) */
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 60px);
-  overflow: hidden;
-}
 
-/* 3. Command‑bar fixed at bottom, above the safe area */
-/* Command bar always fixed at bottom, responsive width */
-.command-bar {
-  position: fixed;
-  left: 0; right: 0;
-  /* Fallback to 12px bottom on browsers that don’t support env() */
-  bottom: env(safe-area-inset-bottom, 12px);
-  display: flex;
-  justify-content: center;
-  padding: 0 16px;
-  z-index: 1001;
-  box-sizing: border-box;
-}
 
 /* The input itself */
 .command-bar input {
