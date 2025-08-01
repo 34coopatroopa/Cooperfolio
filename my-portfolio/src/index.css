@@ -5,9 +5,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow: hidden;            /* disable page scrolling */
-  overscroll-behavior: none;   /* disable iOS rubber-band */
+  height: 100%;  /* disable iOS rubber-band */
   background: #000;
 }
 
@@ -72,14 +70,13 @@ body {
    COMMAND BAR (FIXED INPUT)
 ─────────────────────────────────────────────────────────────── */
 .command-bar {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: env(safe-area-inset-bottom, 16px);
-  z-index: 1001;
-  width: clamp(280px, 90vw, 600px);
-  padding: 0 8px;
-  box-sizing: border-box;
+  bottom: 60px !important;
+}
+
+@media (max-width: 767px) {
+  .command-bar {
+    top: 60px !important;
+  }
 }
 
 .command-bar input {

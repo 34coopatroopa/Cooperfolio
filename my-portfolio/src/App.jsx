@@ -207,7 +207,7 @@ export default function App() {
         <div
           style={{
             position: 'absolute',
-            bottom: '20px', left: '50%',
+            bottom: '70px', left: '50%',
             transform: 'translateX(-50%)', zIndex: 10,
           }}
         >
