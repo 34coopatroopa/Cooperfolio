@@ -1,101 +1,94 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@keyframes flashEyes {
-  0%, 100% { opacity: 0; }
-  50%     { opacity: 1; }
-}
-html, body {
+/* ──────────────────────────────────────────────────────────────
+   GLOBAL RESET & SAFE-AREA
+─────────────────────────────────────────────────────────────── */
+html,
+body {
   margin: 0;
   padding: 0;
-  min-height: 100%;
-  /* allow vertical scrolling when content (or keyboard) expands */
-  overflow-y: auto;
+  height: 100%;
+  overflow: hidden;            /* disable page scrolling */
+  overscroll-behavior: none;   /* disable iOS rubber-band */
+  background: #000;            /* fallback background */
 }
 
+/* ──────────────────────────────────────────────────────────────
+   APP CONTAINER (3D Canvas)
+─────────────────────────────────────────────────────────────── */
+.app-container {
+  position: fixed; /* cover entire viewport */
+  inset: 0;        /* top:0; right:0; bottom:0; left:0 */
+  overflow: hidden;
+}
 
-.flash-eyes {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.8);
+/* ──────────────────────────────────────────────────────────────
+   BOOT SCREEN
+─────────────────────────────────────────────────────────────── */
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #0F0;
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
-  z-index: 50;
+  font-family: monospace;
+  font-size: 2rem;
+  z-index: 9999;
 }
 
-.flash-eyes img {
-  width: 300px;
-  animation: flashEyes 0.5s ease-in-out infinite;
-}
-/* CRT scanlines, vignette & flicker overlay */
-@keyframes crtFlicker {
-  0%   { opacity: 0.96; }
-  5%   { opacity: 1; }
-  10%  { opacity: 0.93; }
-  15%  { opacity: 1; }
-  20%  { opacity: 0.95; }
-  25%  { opacity: 1; }
-  30%  { opacity: 0.94; }
-  100% { opacity: 0.97; }
-}
-
-.retro-overlay {
+/* ──────────────────────────────────────────────────────────────
+   SCARY EYES FLASH (BOB EASTER-EGG)
+─────────────────────────────────────────────────────────────── */
+.flash-eyes {
   position: absolute;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   pointer-events: none;
-  background:
-    /* horizontal scanlines */
-    repeating-linear-gradient(
-      rgba(0,0,0,0.2) 0, rgba(0,0,0,0.2) 1px,
-      transparent 1px, transparent 2px
-    ),
-    /* vignette */
-    radial-gradient(
-      ellipse at center,
-      transparent 60%,
-      rgba(0,0,0,0.6) 100%
-    );
-  mix-blend-mode: multiply;
-  animation: crtFlicker 0.15s infinite;
-  z-index: 20;
+  z-index: 1000;
 }
 
+/* ──────────────────────────────────────────────────────────────
+   CENTER BUTTON
+─────────────────────────────────────────────────────────────── */
+.center-button {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  padding: 8px 12px;
+  background: #8B0000;
+  color: #FFF;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: sans-serif;
+}
 
-/* 2. Let the app container pad itself above the home‑indicator */
+/* ──────────────────────────────────────────────────────────────
+   COMMAND BAR (FIXED INPUT)
+─────────────────────────────────────────────────────────────── */
+.command-bar {
+  position: fixed;                     /* float above the scene */
+  left: 50%;                           /* center horizontally */
+  transform: translateX(-50%);         /* perfect centering */
+  bottom: env(safe-area-inset-bottom, 16px); /* above home-indicator */
+  z-index: 1001;                       /* above everything else */
+  width: clamp(280px, 90vw, 600px);    /* responsive min/ideal/max */
+  padding: 0 8px;                      /* side gutter */
+  box-sizing: border-box;
+}
 
-
-/* The input itself */
 .command-bar input {
   width: 100%;
-  max-width: 600px;         /* don’t get too wide on tablets */
-  padding: 14px 16px;       /* bigger tap area */
-  font-size: 18px;          /* legible on small screens */
-  background: rgba(0,0,0,0.85);
+  padding: 12px 16px;                  /* comfy tap area */
+  font-size: 16px;                     /* legible on small screens */
+  background: rgba(0, 0, 0, 0.85);
   color: #0F0;
   font-family: monospace;
-  border: none;
-  border-radius: 8px;
+  border: 1px solid #0F0;
+  border-radius: 6px;
   outline: none;
-  touch-action: manipulation;     /* improve tap response */
-  -webkit-appearance: none;       /* iOS Safari reset */
-}
-
-
-/* fallback terminal area: leave room for fixed input */
-.terminal-fallback {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  /* subtract input height + margin (about 60px) so it's never under it */
-  height: calc(100% - 60px);
-  padding: 16px;
-  background: #000;
-  color: #0F0;
-  font-family: monospace;
-  overflow-y: auto;
+  touch-action: manipulation;          /* improve mobile tap response */
+  -webkit-appearance: none;            /* reset iOS styling */
 }
