@@ -30,7 +30,7 @@ function BootScreen() {
         zIndex: 100,
       }}
     >
-      Loading Coop‑OS...
+      Loading Coop-OS...
     </div>
   )
 }
@@ -63,6 +63,7 @@ export default function App() {
       '  projects    – what I’ve built',
       '  skills      – my skillset',
       '  clear       – reset terminal',
+      '  linkedin    – open my LinkedIn profile',
     ],
     about: [
       'Cooper Hoy',
@@ -71,29 +72,29 @@ export default function App() {
       'Based in Ames, Iowa',
     ],
     contact: [
-      'Phone: +1 319‑240‑3504',
+      'Phone: +1 319-240-3504',
       'Email: cooper.hoy3105@gmail.com',
       'LinkedIn: linkedin.com/in/cooperhoy',
     ],
     education: [
-      'BA in Cybersecurity Engineering', 
+      'BA in Cybersecurity Engineering',
       'Iowa State University',
-      'Expected Graduation: May 2027',
+      'Expected Graduation: May 2027',
     ],
     experience: [
       'IT Infrastructure Engineer',
       'IT Support Specialist',
       '---------------------',
       'Configured & deployed Windows Servers',
-      'Built AD‑clone sandbox',
+      'Built AD-clone sandbox',
       'Developed hardening GPOs',
-      'Automated Tasks via. Powershell',
-      'DNS and Subnet Adjustments'
+      'Automated Tasks via Powershell',
+      'DNS and Subnet Adjustments',
     ],
     projects: [
       'W@v3 Encryption Software (Python)',
       'visit wav3.fit :)',
-      'HelpLLama AI Help‑desk Chat‑bot',
+      'HelpLLama AI Help-desk Chat-bot',
       'Roomba “Multi Function” Robot',
     ],
     skills: [
@@ -108,13 +109,16 @@ export default function App() {
       '♪ Never gonna run around and desert you',
     ],
     whoami: [
-      'You are a curious developer...', 
+      'You are a curious developer...',
       'exploring my 3D portfolio terminal!',
     ],
     destroy: ['💥 Boom! The monitor is shattered!'],
     'sudo rm -rf /': [
       'Error: Permission denied.',
-       'This portfolio is safe from wipes! 🌱',
+      'This portfolio is safe from wipes! 🌱',
+    ],
+    linkedin: [
+      'Opening LinkedIn...',
     ],
   }
 
@@ -146,6 +150,11 @@ export default function App() {
       setOutput([`$ ${cmd}`, ...commands.destroy])
       return
     }
+    if (key === 'linkedin') {
+      window.open('https://linkedin.com/in/cooperhoy', '_blank')
+      setOutput([`$ ${cmd}`, ...commands.linkedin])
+      return
+    }
 
     const resp = commands[key] || [
       `Unknown command: "${cmd}". Type "help".`,
@@ -164,7 +173,6 @@ export default function App() {
     }
   }
 
-  // If we’re still booting, show only the splash
   if (booting) {
     return <BootScreen />
   }
@@ -207,7 +215,7 @@ export default function App() {
         <div
           style={{
             position: 'absolute',
-            bottom: '70px', left: '50%',
+            bottom: '80px', left: '50%',
             transform: 'translateX(-50%)', zIndex: 10,
           }}
         >
