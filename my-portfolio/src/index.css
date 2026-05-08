@@ -103,8 +103,6 @@ html, body { height: 100%; font-family: var(--sans); background: var(--cream); c
 .photo-cell { position: relative; overflow: hidden; height: 180px; }
 .photo-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
 .photo-cell:hover img { transform: scale(1.04); }
-.photo-cell::after { content: attr(data-label); position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(22,42,18,.75) 0%, transparent 100%); color: #d8eccc; font-family: var(--mono); font-size: 7.5px; letter-spacing: .16em; text-transform: uppercase; padding: 18px 8px 6px; opacity: 0; transition: opacity .3s; }
-.photo-cell:hover::after { opacity: 1; }
 
 /* lede */
 .sl-lede { font-family: var(--serif); font-size: clamp(16px,1.9vw,19px); font-weight: 300; font-style: italic; color: var(--ink-mid); line-height: 1.85; margin-bottom: 24px; border-left: 2px solid var(--f5); padding-left: 18px; }

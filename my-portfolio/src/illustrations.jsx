@@ -179,7 +179,7 @@ function IllustrationHobby({ photos }) {
       {rows.map((row, ri) => (
         <div key={ri} className="photo-row">
           {row.map(p => (
-            <div key={p.src} className="photo-cell" data-label={p.label}>
+            <div key={p.src} className="photo-cell">
               <img src={p.src} alt={p.label}/>
             </div>
           ))}
