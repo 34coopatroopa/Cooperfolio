@@ -173,11 +173,16 @@ function IllustrationI() {
 }
 
 function IllustrationHobby({ photos }) {
+  const rows = [photos.slice(0, 3), photos.slice(3, 6), photos.slice(6, 9)]
   return (
-    <div className="photo-grid" style={{ margin: '16px 0' }}>
-      {photos.map(p => (
-        <div key={p.src} className="photo-label" data-label={p.label}>
-          <img src={p.src} alt={p.label} style={{ width: '100%', height: '160px', objectFit: 'cover', display: 'block' }}/>
+    <div className="photo-gallery">
+      {rows.map((row, ri) => (
+        <div key={ri} className="photo-row">
+          {row.map(p => (
+            <div key={p.src} className="photo-cell" data-label={p.label}>
+              <img src={p.src} alt={p.label}/>
+            </div>
+          ))}
         </div>
       ))}
     </div>

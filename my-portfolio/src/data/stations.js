@@ -133,9 +133,15 @@ export const STATIONS = [
     sub: 'Hiking · Travel · Interests · 2023 — Present',
     lede: '"The ridge runs further than the résumé. Trails hiked, countries visited, and hours logged chasing things that have nothing to do with a job description."',
     photos: [
-      { src: '/photos/meHiking.jpg',               label: 'Hiking' },
-      { src: '/photos/Travel%201_Mexico.jpeg',     label: 'Travel' },
-      { src: '/photos/Hobby%201.jpeg',             label: 'Hobbies' },
+      { src: '/photos/meHiking.jpg',             label: 'On the trail' },
+      { src: '/photos/hiking1.jpeg',             label: 'Hiking' },
+      { src: '/photos/hiking2.jpeg',             label: 'Summit' },
+      { src: '/photos/Travel%201_Mexico.jpeg',   label: 'Mexico' },
+      { src: '/photos/travel2.jpeg',             label: 'Travel' },
+      { src: '/photos/travelHK.jpeg',            label: 'Hong Kong' },
+      { src: '/photos/Hobby%201.jpeg',           label: 'Hobbies' },
+      { src: '/photos/hobby3.jpeg',              label: 'TCG' },
+      { src: '/photos/hobby1b.jpeg',             label: 'Gaming' },
     ],
     hobbyCards: [
       { icon: '🏔️', t: 'Hiking & Outdoors', d: 'Logging miles on Iowa trails and beyond. Prefers ridgelines to parking lots.' },
