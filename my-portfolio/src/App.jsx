@@ -5,24 +5,24 @@ import MainLayout from './components/MainLayout'
 import './index.css'
 
 export default function App() {
-  const [showLanding, setShowLanding] = useState(true)
+  const [mainActive, setMainActive] = useState(false)
   const [landingOut, setLandingOut] = useState(false)
 
   function handleEnter() {
     setLandingOut(true)
-    setTimeout(() => setShowLanding(false), 600)
+    setTimeout(() => setMainActive(true), 120)
   }
 
   function handleBack() {
-    setShowLanding(true)
     setLandingOut(false)
+    setMainActive(false)
   }
 
   return (
-    <>
-      {showLanding && <LandingScreen onEnter={handleEnter} out={landingOut} />}
-      {!showLanding && <MainLayout onBack={handleBack} />}
+    <div className="screens">
+      <LandingScreen onEnter={handleEnter} out={landingOut} />
+      <MainLayout onBack={handleBack} active={mainActive} />
       <Analytics />
-    </>
+    </div>
   )
 }

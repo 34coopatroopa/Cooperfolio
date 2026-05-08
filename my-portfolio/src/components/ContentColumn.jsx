@@ -41,7 +41,7 @@ export default function ContentColumn({ curSlide, onSlideChange }) {
 
   return (
     <div className="content-col">
-      <div className="slide-window">
+      <div className="slide-win">
         {STATIONS.map((station, i) => (
           <Slide
             key={i}
@@ -53,7 +53,7 @@ export default function ContentColumn({ curSlide, onSlideChange }) {
       </div>
 
       <nav className="content-nav">
-        <button className="nav-btn" onClick={goHigher} disabled={curSlide === 0}
+        <button className="nav-arr" onClick={goHigher} disabled={curSlide === 0}
           aria-label="Higher elevation">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <polyline points="3,9 7,5 11,9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -61,14 +61,17 @@ export default function ContentColumn({ curSlide, onSlideChange }) {
           <span>Higher</span>
         </button>
 
-        <div className="ndots">
-          {STATIONS.map((_, i) => (
-            <button key={i} className={`ndot${i === curSlide ? ' active' : ''}`}
-              onClick={() => goTo(i)} aria-label={`Station ${i + 1}`}/>
-          ))}
+        <div className="nav-center">
+          <div className="nav-dots">
+            {STATIONS.map((_, i) => (
+              <button key={i} className={`ndot${i === curSlide ? ' on' : ''}`}
+                onClick={() => goTo(i)} aria-label={`Station ${i + 1}`}/>
+            ))}
+          </div>
+          <div className="nav-sname">{LABELS[curSlide]}</div>
         </div>
 
-        <button className="nav-btn" onClick={goLower} disabled={curSlide === STATIONS.length - 1}
+        <button className="nav-arr" onClick={goLower} disabled={curSlide === STATIONS.length - 1}
           aria-label="Lower elevation">
           <span>Lower</span>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
