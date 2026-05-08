@@ -37,7 +37,7 @@ export default function ContentColumn({ curSlide, onSlideChange }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [curSlide])
+  }, [curSlide]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="content-col">

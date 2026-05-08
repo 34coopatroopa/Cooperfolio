@@ -60,7 +60,7 @@ export default function MapColumn({ curSlide, onSelect, onBack, mapOpen }) {
     moveTram(curSlide)
     moveRing(curSlide)
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
-  }, [curSlide])
+  }, [curSlide]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const elevLabels = [
     { y: 85,  t: "6,643'" },

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 function IllustrationVI() {
   return (
     <div className="fig-box">
