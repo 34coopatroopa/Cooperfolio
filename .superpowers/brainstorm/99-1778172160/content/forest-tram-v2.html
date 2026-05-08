@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cooper Hoy — Forest Tram v2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cream:#f3ede0; --paper:#ece5d2; --parchment:#e4dcc8;
+  --f1:#182e14; --f2:#244d1e; --f3:#3a6e30; --f4:#5a9048; --f5:#8ab870; --f6:#b8d89a; --f7:#d8ecc8;
+  --fog:#c8dcb8; --mist:#dce8cc;
+  --ink:#1a2e16; --ink-mid:#4a5e42; --ink-dim:#7a8e72; --ink-faint:#a8b8a0;
+  --amber:#b88c28; --amber-lo:rgba(184,140,40,.1);
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+html,body{height:100%;font-family:var(--sans);background:var(--cream);color:var(--ink);overflow:hidden;}
+
+/* ═══════════════ SCREENS ═══════════════ */
+.screens{width:100%;height:100%;position:relative;overflow:hidden;}
+
+/* ═══════════════ LANDING ═══════════════ */
+.landing{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  transition:transform .95s cubic-bezier(.77,0,.18,1),opacity .7s;
+  z-index:2;
+}
+.landing.out{transform:translateY(-100%);opacity:0;pointer-events:none;}
+
+.hero-photo{
+  flex:1;position:relative;overflow:hidden;
+  background:linear-gradient(175deg,#182e14 0%,#244d1e 28%,#3a6e30 55%,#5a9048 78%,#7aac60 100%);
+}
+/* photo will be here — img#heroImg covers this */
+.hero-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;}
+
+/* light leak */
+.hero-photo::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 30%,rgba(184,216,154,.15) 0%,transparent 55%),
+             radial-gradient(ellipse at 80% 70%,rgba(24,46,20,.5) 0%,transparent 50%);
+  z-index:1;
+}
+/* gradient fade at bottom */
+.hero-photo::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:60%;
+  background:linear-gradient(to top,rgba(24,46,20,.88) 0%,transparent 100%);
+  z-index:2;
+}
+/* tree silhouette row */
+.tree-row{position:absolute;bottom:0;left:0;right:0;height:48%;z-index:3;pointer-events:none;}
+
+/* name block */
+.hero-name{
+  position:absolute;bottom:0;left:0;right:0;z-index:4;
+  padding:0 56px 56px;
+}
+.hero-name h1{
+  font-family:var(--serif);font-size:64px;font-weight:300;line-height:1;
+  color:#f3ede0;letter-spacing:.01em;
+  text-shadow:0 2px 24px rgba(0,0,0,.35);
+}
+.hero-name h1 em{font-style:italic;color:#c8e0b0;}
+.hero-name .tagline{
+  font-family:var(--mono);font-size:10px;letter-spacing:.35em;
+  color:#b0cc98;text-transform:uppercase;margin-top:8px;
+}
+
+/* ─── CENTER ENTER BUTTON ─── */
+.enter-zone{
+  position:absolute;inset:0;z-index:5;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.enter-btn{
+  pointer-events:auto;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  background:none;border:none;cursor:pointer;
+  animation:breathe 3s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.enter-ring{
+  width:72px;height:72px;border-radius:50%;
+  border:1.5px solid rgba(200,224,176,.55);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  transition:border-color .3s,background .3s;
+  background:rgba(24,46,20,.3);
+  backdrop-filter:blur(4px);
+}
+.enter-ring::before{
+  content:'';position:absolute;inset:-8px;border-radius:50%;
+  border:1px solid rgba(200,224,176,.2);
+  animation:ripple 2.8s ease-out infinite;
+}
+@keyframes ripple{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.35);opacity:0}}
+.enter-btn:hover .enter-ring{border-color:rgba(200,224,176,.9);background:rgba(24,46,20,.5);}
+.enter-label{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.32em;
+  color:rgba(200,224,176,.7);text-transform:uppercase;
+  transition:color .3s;
+}
+.enter-btn:hover .enter-label{color:rgba(200,224,176,1);}
+
+/* landing bottom strip */
+.landing-strip{
+  background:var(--cream);border-top:1px solid var(--fog);
+  padding:14px 56px;display:flex;justify-content:space-between;align-items:center;
+  flex-shrink:0;
+}
+.strip-meta{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--ink-dim);text-transform:uppercase;}
+
+/* ═══════════════ MAIN ═══════════════ */
+.main{
+  position:absolute;inset:0;display:flex;
+  transform:translateY(100%);
+  transition:transform .95s cubic-bezier(.77,0,.18,1);
+  z-index:1;background:var(--cream);
+}
+.main.in{transform:translateY(0);z-index:3;}
+
+/* ═══════════════ MAP COL ═══════════════ */
+.map-col{
+  width:300px;flex-shrink:0;
+  background:var(--paper);
+  border-right:1px solid var(--fog);
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+}
+.map-head{
+  padding:20px 22px 14px;border-bottom:1px solid var(--fog);flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.back-btn{
+  background:none;border:none;cursor:pointer;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.22em;color:var(--ink-dim);
+  text-transform:uppercase;display:flex;align-items:center;gap:5px;transition:color .2s;
+}
+.back-btn:hover{color:var(--f2);}
+.map-title-block{}
+.map-title{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--ink);}
+.map-sub{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--ink-dim);text-transform:uppercase;margin-top:2px;}
+
+/* topo map */
+.topo-wrap{flex:1;position:relative;overflow:hidden;}
+#topoSvg{width:100%;height:100%;}
+
+/* contact */
+.map-foot{
+  border-top:1px solid var(--fog);padding:14px 22px;
+  display:flex;flex-direction:column;gap:6px;flex-shrink:0;
+}
+.clink{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:inherit;transition:color .2s;}
+.clink:hover{color:var(--f2);}
+.ck{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--ink-dim);text-transform:uppercase;width:26px;flex-shrink:0;}
+.cv{font-size:11px;color:var(--ink-mid);}
+
+/* ═══════════════ CONTENT COL ═══════════════ */
+.content-col{flex:1;position:relative;display:flex;flex-direction:column;overflow:hidden;}
+
+/* slide window */
+.slide-win{flex:1;position:relative;overflow:hidden;}
+.slide{
+  position:absolute;inset:0;overflow-y:auto;
+  padding:48px 56px 32px;
+  opacity:0;pointer-events:none;
+  transition:opacity .45s cubic-bezier(.4,0,.2,1),transform .45s cubic-bezier(.4,0,.2,1);
+  transform:translateY(28px);
+}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0);}
+.slide.leaving{opacity:0;transform:translateY(-28px);}
+
+/* artsy watermark */
+.slide-watermark{
+  position:absolute;right:40px;top:32px;
+  font-family:var(--serif);font-size:140px;font-weight:600;font-style:italic;
+  color:rgba(58,110,48,.05);line-height:1;pointer-events:none;user-select:none;
+  letter-spacing:-.02em;
+}
+
+/* station header */
+.sl-badge{
+  display:flex;align-items:baseline;gap:14px;margin-bottom:8px;
+}
+.sl-num{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--f3);text-transform:uppercase;}
+.sl-elev{
+  font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--ink-faint);
+  margin-left:auto;
+}
+.sl-title{
+  font-family:var(--serif);font-size:38px;font-weight:300;color:var(--ink);
+  line-height:1.12;margin-bottom:4px;
+}
+.sl-title em{font-style:italic;color:var(--f2);}
+.sl-sub{
+  font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--ink-dim);
+  text-transform:uppercase;
+}
+/* decorative rule */
+.sl-rule{
+  display:flex;align-items:center;gap:12px;margin:20px 0;
+}
+.sl-rule-line{flex:1;height:1px;background:var(--fog);}
+.sl-rule-mark{
+  width:8px;height:8px;border:1.5px solid var(--f5);
+  transform:rotate(45deg);flex-shrink:0;
+}
+
+/* lede */
+.sl-lede{
+  font-family:var(--serif);font-size:17px;font-weight:300;
+  color:var(--ink-mid);line-height:1.82;margin-bottom:24px;
+  border-left:2px solid var(--f5);padding-left:18px;
+  font-style:italic;
+}
+
+/* highlights grid */
+.sl-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--fog);margin-bottom:24px;
+}
+.sl-hl{
+  background:var(--cream);padding:12px 14px;
+  display:flex;flex-direction:column;gap:3px;
+}
+.hl-k{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--ink-dim);text-transform:uppercase;}
+.hl-v{font-family:var(--serif);font-size:17px;color:var(--ink);}
+.hl-v em{font-style:italic;color:var(--f2);}
+
+/* moments */
+.sl-section-head{
+  font-family:var(--mono);font-size:9px;letter-spacing:.28em;color:var(--ink-dim);
+  text-transform:uppercase;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.sl-section-head::after{content:'';flex:1;height:1px;background:var(--fog);}
+.sl-moments{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:24px;}
+.sl-moments li{
+  font-size:13px;color:var(--ink-mid);line-height:1.7;
+  padding-left:20px;position:relative;
+}
+.sl-moments li::before{content:'▸';position:absolute;left:0;color:var(--f4);font-size:10px;}
+
+/* projects */
+.sl-projects{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
+.sl-proj{background:var(--paper);border:1px solid var(--fog);padding:16px 18px;}
+.proj-head{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+.proj-t{font-family:var(--serif);font-size:17px;font-weight:400;color:var(--ink);}
+.proj-st{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--ink-dim);text-transform:uppercase;}
+.proj-d{font-size:12.5px;color:var(--ink-mid);line-height:1.65;margin-bottom:10px;}
+.proj-stack{display:flex;flex-wrap:wrap;gap:4px;}
+.proj-tag{font-family:var(--mono);font-size:8px;letter-spacing:.14em;padding:2px 8px;border:1px solid var(--fog);color:var(--ink-dim);text-transform:uppercase;}
+
+/* skill groups */
+.sl-skills{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
+.skill-group{}
+.sg-head{font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;color:var(--f3);text-transform:uppercase;margin-bottom:7px;}
+.sg-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.sg-tag{font-size:11px;color:var(--ink-mid);padding:4px 10px;background:var(--paper);border:1px solid var(--fog);}
+
+/* tags */
+.sl-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.sl-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;padding:3px 9px;border:1px solid var(--f6);color:var(--ink-dim);text-transform:uppercase;background:rgba(90,144,72,.05);}
+
+/* ─── CONTENT NAV ─── */
+.content-nav{
+  border-top:1px solid var(--fog);padding:14px 56px;
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;
+}
+.nav-arr{
+  background:none;border:none;cursor:pointer;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;
+  color:var(--ink-dim);text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;transition:color .2s;padding:0;
+}
+.nav-arr:hover{color:var(--f2);}
+.nav-arr:disabled{opacity:.2;cursor:default;}
+.nav-dots{display:flex;gap:7px;align-items:center;}
+.ndot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--fog);cursor:pointer;
+  transition:background .25s,transform .25s;border:none;padding:0;
+}
+.ndot.on{background:var(--f2);transform:scale(1.5);}
+</style>
+</head>
+<body>
+<div class="screens">
+
+<!-- ══════════════════ LANDING ══════════════════ -->
+<div class="landing" id="landing">
+  <div class="hero-photo" id="heroPhoto">
+    <!-- img will go here: <img id="heroImg" src="..."> -->
+
+    <!-- Tree silhouette -->
+    <svg class="tree-row" viewBox="0 0 1000 220" preserveAspectRatio="xMidYMax meet" fill="none">
+      <!-- far layer -->
+      <g fill="#1e3a18" opacity=".4">
+        <polygon points="30,220 48,160 66,220"/><polygon points="95,220 114,155 133,220"/>
+        <polygon points="162,220 180,162 198,220"/><polygon points="228,220 246,158 264,220"/>
+        <polygon points="294,220 312,156 330,220"/><polygon points="360,220 378,160 396,220"/>
+        <polygon points="426,220 444,154 462,220"/><polygon points="492,220 510,158 528,220"/>
+        <polygon points="556,220 574,155 592,220"/><polygon points="622,220 640,160 658,220"/>
+        <polygon points="688,220 706,156 724,220"/><polygon points="752,220 770,158 788,220"/>
+        <polygon points="818,220 836,154 854,220"/><polygon points="882,220 900,158 918,220"/>
+        <polygon points="945,220 963,162 981,220"/>
+      </g>
+      <!-- near layer -->
+      <g fill="#182e14">
+        <polygon points="0,220 20,148 40,220"/><polygon points="8,220 26,130 44,220"/>
+        <polygon points="58,220 80,140 102,220"/><polygon points="68,220 86,158 104,220"/>
+        <polygon points="120,220 142,135 164,220"/><polygon points="180,220 202,142 224,220"/>
+        <polygon points="240,220 262,132 284,220"/><polygon points="300,220 322,140 344,220"/>
+        <polygon points="360,220 382,136 404,220"/><polygon points="420,220 442,128 464,220"/>
+        <polygon points="478,220 500,138 522,220"/><polygon points="538,220 560,130 582,220"/>
+        <polygon points="598,220 620,136 642,220"/><polygon points="658,220 680,132 702,220"/>
+        <polygon points="718,220 740,138 762,220"/><polygon points="778,220 800,128 822,220"/>
+        <polygon points="840,220 862,136 884,220"/><polygon points="900,220 922,130 944,220"/>
+        <polygon points="958,220 980,138 1002,220"/>
+      </g>
+    </svg>
+
+    <!-- name -->
+    <div class="hero-name">
+      <h1>Cooper <em>Hoy</em></h1>
+      <div class="tagline">Cyber Security Engineering · Ames, Iowa</div>
+    </div>
+
+    <!-- centered enter -->
+    <div class="enter-zone">
+      <button class="enter-btn" onclick="enter()">
+        <div class="enter-ring">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <polyline points="3,7 9,13 15,7" stroke="rgba(200,224,176,.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="enter-label">Enter the ascent</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="landing-strip">
+    <div class="strip-meta">An illustrated curriculum vitæ</div>
+    <div class="strip-meta">Plate I &nbsp;·&nbsp; 2025</div>
+  </div>
+</div>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<div class="main" id="main">
+
+  <!-- MAP COLUMN -->
+  <div class="map-col">
+    <div class="map-head">
+      <button class="back-btn" onclick="leave()">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+          <polyline points="5,1 2,4 5,7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        Back
+      </button>
+      <div class="map-title-block">
+        <div class="map-title">Ascent Map</div>
+        <div class="map-sub">6 stations · tram route</div>
+      </div>
+    </div>
+
+    <div class="topo-wrap">
+      <svg id="topoSvg" viewBox="0 0 300 500" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="sglow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <!-- elevation gradient fills -->
+          <radialGradient id="topoFill" cx="50%" cy="28%" r="55%">
+            <stop offset="0%"  stop-color="#3a6e30" stop-opacity=".22"/>
+            <stop offset="40%" stop-color="#5a9048" stop-opacity=".12"/>
+            <stop offset="100%" stop-color="#b8d89a" stop-opacity=".04"/>
+          </radialGradient>
+          <linearGradient id="cableGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#244d1e"/>
+            <stop offset="100%" stop-color="#3a6e30"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Parchment bg tint -->
+        <rect width="300" height="500" fill="var(--paper)"/>
+
+        <!-- Grid (topo map style) -->
+        <g stroke="#c8dcb8" stroke-width=".4" opacity=".5">
+          <line x1="0" y1="83" x2="300" y2="83"/>
+          <line x1="0" y1="166" x2="300" y2="166"/>
+          <line x1="0" y1="249" x2="300" y2="249"/>
+          <line x1="0" y1="332" x2="300" y2="332"/>
+          <line x1="0" y1="415" x2="300" y2="415"/>
+          <line x1="75" y1="0" x2="75" y2="500"/>
+          <line x1="150" y1="0" x2="150" y2="500"/>
+          <line x1="225" y1="0" x2="225" y2="500"/>
+        </g>
+        <!-- Grid labels -->
+        <g font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#a8b8a0" opacity=".7">
+          <text x="3" y="82">–</text><text x="3" y="165">–</text>
+          <text x="3" y="248">–</text><text x="3" y="331">–</text>
+        </g>
+
+        <!-- Topographic contours centered at peak (150, 78) -->
+        <g fill="none" stroke-linecap="round">
+          <!-- outermost: light -->
+          <ellipse cx="150" cy="82" rx="128" ry="60" stroke="#b8d89a" stroke-width=".6" opacity=".4"/>
+          <ellipse cx="150" cy="82" rx="106" ry="50" stroke="#a0c880" stroke-width=".7" opacity=".45"/>
+          <ellipse cx="150" cy="82" rx="84" ry="40" stroke="#8ab870" stroke-width=".8" opacity=".5"/>
+          <ellipse cx="150" cy="82" rx="64" ry="30" stroke="#6aa058" stroke-width=".9" opacity=".55"/>
+          <ellipse cx="150" cy="82" rx="46" ry="22" stroke="#4a8040" stroke-width="1.0" opacity=".6"/>
+          <ellipse cx="150" cy="82" rx="30" ry="14" stroke="#306030" stroke-width="1.1" opacity=".65"/>
+          <ellipse cx="150" cy="82" rx="16" ry="7"  stroke="#1e4820" stroke-width="1.2" opacity=".7"/>
+          <!-- summit fill -->
+          <ellipse cx="150" cy="82" rx="6"  ry="3"  fill="#1e3318" opacity=".85"/>
+        </g>
+        <!-- Contour elevation labels -->
+        <g font-family="'JetBrains Mono',monospace" font-size="6" fill="#6a8860" opacity=".7">
+          <text x="260" y="60">6600</text>
+          <text x="260" y="72">6000</text>
+          <text x="260" y="85">5000</text>
+          <text x="260" y="98">4000</text>
+        </g>
+
+        <!-- Elevation fill -->
+        <ellipse cx="150" cy="82" rx="128" ry="60" fill="url(#topoFill)"/>
+
+        <!-- Forest patches (map-style tree clusters) -->
+        <!-- Left forest zone -->
+        <g fill="none" stroke="#4a7a40" opacity=".45">
+          <!-- triangle symbols like real topo trees -->
+          <g transform="translate(42,145)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(58,162)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(38,180)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(55,198)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(40,218)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(60,235)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(42,255)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(58,272)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(38,292)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(56,310)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(40,330)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(58,348)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(42,368)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(56,388)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+        </g>
+        <!-- Right forest zone -->
+        <g fill="none" stroke="#4a7a40" opacity=".45">
+          <g transform="translate(242,148)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(258,165)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(244,185)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(260,205)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(242,225)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(258,245)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(244,265)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(260,285)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(242,308)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(258,328)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+          <g transform="translate(244,348)"><polygon points="0,-8 6,4 -6,4" stroke-width="1"/><line x1="0" y1="4" x2="0" y2="8" stroke-width="1.2"/></g>
+          <g transform="translate(260,368)"><polygon points="0,-9 7,5 -7,5" stroke-width="1"/><line x1="0" y1="5" x2="0" y2="9" stroke-width="1.2"/></g>
+        </g>
+
+        <!-- TRAM CABLE PATH (the actual path we animate along) -->
+        <path id="tramPath"
+          d="M 150,82 C 155,100 162,118 168,138 C 174,158 168,172 162,192 C 156,212 162,228 166,248 C 170,268 162,282 155,302 C 148,322 148,338 145,358 C 142,378 136,392 128,412 C 120,432 114,448 108,462"
+          fill="none" stroke="url(#cableGrad)" stroke-width="2" stroke-opacity=".3"/>
+
+        <!-- Cable (visual — thin dashed line on top) -->
+        <path
+          d="M 150,82 C 155,100 162,118 168,138 C 174,158 168,172 162,192 C 156,212 162,228 166,248 C 170,268 162,282 155,302 C 148,322 148,338 145,358 C 142,378 136,392 128,412 C 120,432 114,448 108,462"
+          fill="none" stroke="#4a7a40" stroke-width=".9" stroke-opacity=".6" stroke-dasharray="5,4"/>
+
+        <!-- Cable support towers (small vertical lines along cable) -->
+        <g stroke="#3a6030" stroke-width="1.2" opacity=".4">
+          <line x1="162" y1="128" x2="162" y2="140"/>
+          <line x1="165" y1="185" x2="165" y2="196"/>
+          <line x1="164" y1="240" x2="164" y2="252"/>
+          <line x1="152" y1="295" x2="152" y2="307"/>
+          <line x1="146" y1="350" x2="146" y2="362"/>
+          <line x1="130" y1="405" x2="130" y2="416"/>
+        </g>
+
+        <!-- Station nodes + labels -->
+        <!-- VI Summit: 150,82 -->
+        <!-- V Cache:   ~162,192 -->
+        <!-- IV Atelier: ~166,248 -->
+        <!-- III Highland: ~155,302 -->
+        <!-- II Crossing: ~145,358 -->
+        <!-- I Trailhead: ~108,462 -->
+
+        <!-- Active highlight ring (shown on active node via JS) -->
+        <circle id="activeRing" cx="150" cy="82" r="14" fill="none" stroke="#4a7a40" stroke-width="1" stroke-opacity=".4" stroke-dasharray="3,3"/>
+
+        <!-- Station node circles -->
+        <g id="stationNodes">
+          <g class="snode" data-i="0" style="cursor:pointer" onclick="jumpTo(0)">
+            <circle cx="150" cy="82" r="8" fill="var(--paper)" stroke="#244d1e" stroke-width="1.5"/>
+            <text x="150" y="85.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="7.5" fill="#244d1e">VI</text>
+          </g>
+          <g class="snode" data-i="1" style="cursor:pointer" onclick="jumpTo(1)">
+            <circle cx="162" cy="192" r="8" fill="var(--paper)" stroke="#244d1e" stroke-width="1.5"/>
+            <text x="162" y="195.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="7.5" fill="#244d1e">V</text>
+          </g>
+          <g class="snode" data-i="2" style="cursor:pointer" onclick="jumpTo(2)">
+            <circle cx="166" cy="248" r="8" fill="var(--paper)" stroke="#244d1e" stroke-width="1.5"/>
+            <text x="166" y="251.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="7.5" fill="#244d1e">IV</text>
+          </g>
+          <g class="snode" data-i="3" style="cursor:pointer" onclick="jumpTo(3)">
+            <circle cx="155" cy="302" r="8" fill="var(--paper)" stroke="#244d1e" stroke-width="1.5"/>
+            <text x="155" y="305.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="7.5" fill="#244d1e">III</text>
+          </g>
+          <g class="snode" data-i="4" style="cursor:pointer" onclick="jumpTo(4)">
+            <circle cx="145" cy="358" r="8" fill="var(--paper)" stroke="#244d1e" stroke-width="1.5"/>
+            <text x="145" y="361.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="7.5" fill="#244d1e">II</text>
+          </g>
+          <g class="snode" data-i="5" style="cursor:pointer" onclick="jumpTo(5)">
+            <circle cx="108" cy="462" r="8" fill="var(--paper)" stroke="#244d1e" stroke-width="1.5"/>
+            <text x="108" y="465.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="7.5" fill="#244d1e">I</text>
+          </g>
+        </g>
+
+        <!-- Station name labels -->
+        <g font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#506048">
+          <text x="164" y="79">Summit</text>
+          <text x="174" y="189">Cache</text>
+          <text x="178" y="245">Atelier</text>
+          <text x="167" y="299">Highland</text>
+          <text x="157" y="355">Crossing</text>
+          <text x="120" y="460">Trailhead</text>
+        </g>
+
+        <!-- Elevation tick labels on right margin -->
+        <g font-family="'JetBrains Mono',monospace" font-size="6" fill="#8a9e80" opacity=".65">
+          <text x="275" y="84">6,643'</text>
+          <text x="275" y="194">5,540'</text>
+          <text x="275" y="250">4,910'</text>
+          <text x="275" y="304">3,840'</text>
+          <text x="275" y="360">2,280'</text>
+          <text x="272" y="464">1,460'</text>
+        </g>
+
+        <!-- Compass rose (bottom left) -->
+        <g transform="translate(28,470)" fill="none" stroke="#8a9e80" stroke-width=".9" opacity=".6">
+          <line x1="0" y1="-12" x2="0" y2="12"/>
+          <line x1="-12" y1="0" x2="12" y2="0"/>
+          <polygon points="0,-12 3,-4 0,-7 -3,-4" fill="#4a7a40" stroke="none"/>
+          <text x="0" y="-15" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6" fill="#4a7a40" stroke="none">N</text>
+        </g>
+
+        <!-- Scale bar -->
+        <g transform="translate(200,482)" stroke="#8a9e80" stroke-width=".8" fill="none" opacity=".6">
+          <line x1="0" y1="0" x2="60" y2="0"/>
+          <line x1="0" y1="-3" x2="0" y2="3"/>
+          <line x1="60" y1="-3" x2="60" y2="3"/>
+          <text x="30" y="-6" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6" fill="#8a9e80">0.5 mi</text>
+        </g>
+
+        <!-- TRAM CAR GROUP (positioned via JS) -->
+        <g id="tramCar" transform="translate(150,82)">
+          <!-- shadow -->
+          <ellipse cx="1" cy="16" rx="9" ry="3" fill="rgba(24,46,20,.2)"/>
+          <!-- cable pulley wheel -->
+          <circle cx="0" cy="-16" r="3.5" fill="none" stroke="#244d1e" stroke-width="1.2"/>
+          <circle cx="0" cy="-16" r="1.2" fill="#244d1e"/>
+          <!-- suspension arm -->
+          <line x1="0" y1="-12" x2="0" y2="-8" stroke="#244d1e" stroke-width="1.4"/>
+          <!-- gondola body -->
+          <rect x="-11" y="-8" width="22" height="15" rx="3.5"
+            fill="var(--cream)" stroke="#244d1e" stroke-width="1.4"/>
+          <!-- roof curve -->
+          <path d="M -11,-8 Q 0,-13 11,-8" fill="#d4e0c8" stroke="#244d1e" stroke-width="1"/>
+          <!-- windows (3 panes) -->
+          <rect x="-7.5" y="-4" width="5" height="5" rx="1" fill="none" stroke="#3a6e30" stroke-width=".8"/>
+          <rect x="-1.5" y="-4" width="3" height="5" rx="1" fill="none" stroke="#3a6e30" stroke-width=".8"/>
+          <rect x="3"   y="-4" width="5" height="5" rx="1" fill="none" stroke="#3a6e30" stroke-width=".8"/>
+          <!-- bottom rail -->
+          <line x1="-11" y1="7" x2="11" y2="7" stroke="#244d1e" stroke-width=".8" opacity=".5"/>
+        </g>
+
+        <!-- Map border -->
+        <rect x="1" y="1" width="298" height="498" fill="none" stroke="#b8d89a" stroke-width="1" opacity=".4"/>
+        <!-- Corner marks -->
+        <g stroke="#8a9e80" stroke-width=".8" opacity=".5">
+          <polyline points="1,1 12,1 12,12"/><polyline points="288,1 299,1 299,12"/>
+          <polyline points="1,488 1,499 12,499"/><polyline points="299,488 299,499 288,499"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="map-foot">
+      <a href="mailto:cjhoy@iastate.edu" class="clink"><span class="ck">mail</span><span class="cv">cjhoy@iastate.edu</span></a>
+      <a href="tel:+13192403504" class="clink"><span class="ck">tel</span><span class="cv">319.240.3504</span></a>
+      <a href="#" class="clink"><span class="ck">in</span><span class="cv">linkedin.com/in/cooperhoy</span></a>
+      <a href="#" class="clink"><span class="ck">gh</span><span class="cv">34coopatroopa</span></a>
+    </div>
+  </div>
+
+  <!-- CONTENT COLUMN -->
+  <div class="content-col">
+    <div class="slide-win" id="slideWin">
+
+      <!-- SLIDE 0: VI Summit — FTC -->
+      <div class="slide active" data-i="0">
+        <div class="slide-watermark">VI</div>
+        <div class="sl-badge">
+          <span class="sl-num">Station VI · The Summit</span>
+          <span class="sl-elev">6,643 ft</span>
+        </div>
+        <div class="sl-title">FIRST <em>Tech Challenge</em></div>
+        <div class="sl-sub">Mentor · Grundy Center, IA · 2023 — Present</div>
+        <div class="sl-rule"><div class="sl-rule-line"></div><div class="sl-rule-mark"></div><div class="sl-rule-line"></div></div>
+        <div class="sl-lede">"The summit is paying it forward — thirty-plus students, three robotics teams, and a season that ends in February with something that actually works."</div>
+        <div class="sl-grid">
+          <div class="sl-hl"><div class="hl-k">Students</div><div class="hl-v"><em>30+</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Teams</div><div class="hl-v">3 squads</div></div>
+          <div class="sl-hl"><div class="hl-k">Focus</div><div class="hl-v">Mech · <em>Java</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Seasons</div><div class="hl-v"><em>3</em> years</div></div>
+        </div>
+        <div class="sl-section-head">Notable moments</div>
+        <ul class="sl-moments">
+          <li>Mentoring FTC Teams 13186, 14375, and 10069 across mechanical design, Java robot programming, and match strategy.</li>
+          <li>Coaching students from rough prototype to competition-ready robot — debugging, documentation, and engineering communication included.</li>
+          <li>Helping students learn to think like engineers: identify root causes, communicate clearly, and iterate fast under pressure.</li>
+        </ul>
+        <div class="sl-tags">
+          <span class="sl-tag">30+ students</span><span class="sl-tag">Java robotics</span><span class="sl-tag">Mechanical design</span><span class="sl-tag">Match strategy</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 1: V Cache — Skills -->
+      <div class="slide" data-i="1">
+        <div class="slide-watermark">V</div>
+        <div class="sl-badge">
+          <span class="sl-num">Station V · The Cache</span>
+          <span class="sl-elev">5,540 ft</span>
+        </div>
+        <div class="sl-title">The <em>kit</em></div>
+        <div class="sl-sub">Tools used in earnest — not just listed</div>
+        <div class="sl-rule"><div class="sl-rule-line"></div><div class="sl-rule-mark"></div><div class="sl-rule-line"></div></div>
+        <div class="sl-lede">"A working inventory of languages, platforms, and tools that have actually shipped something, hardened something, or fixed something in the real world."</div>
+        <div class="sl-skills">
+          <div class="skill-group">
+            <div class="sg-head">Programming & Development</div>
+            <div class="sg-tags"><span class="sg-tag">Python</span><span class="sg-tag">Java</span><span class="sg-tag">Spring Boot</span><span class="sg-tag">PowerShell</span><span class="sg-tag">Git</span><span class="sg-tag">LangChain</span><span class="sg-tag">OpenCV</span></div>
+          </div>
+          <div class="skill-group">
+            <div class="sg-head">Systems & Infrastructure</div>
+            <div class="sg-tags"><span class="sg-tag">Windows Server</span><span class="sg-tag">Linux</span><span class="sg-tag">VMware</span><span class="sg-tag">Hyper-V</span><span class="sg-tag">Active Directory</span><span class="sg-tag">Group Policy</span><span class="sg-tag">Exchange</span></div>
+          </div>
+          <div class="skill-group">
+            <div class="sg-head">Security & Networking</div>
+            <div class="sg-tags"><span class="sg-tag">Cryptography</span><span class="sg-tag">Server Hardening</span><span class="sg-tag">Network Config</span><span class="sg-tag">Auth Systems</span><span class="sg-tag">Pen Testing</span></div>
+          </div>
+          <div class="skill-group">
+            <div class="sg-head">Embedded & Hardware</div>
+            <div class="sg-tags"><span class="sg-tag">Raspberry Pi</span><span class="sg-tag">RISC-V</span><span class="sg-tag">Assembly</span><span class="sg-tag">Environmental Sensors</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: IV Atelier — Projects -->
+      <div class="slide" data-i="2">
+        <div class="slide-watermark">IV</div>
+        <div class="sl-badge">
+          <span class="sl-num">Station IV · The Atelier</span>
+          <span class="sl-elev">4,910 ft</span>
+        </div>
+        <div class="sl-title">Three <em>side builds</em></div>
+        <div class="sl-sub">Personal projects · 2025</div>
+        <div class="sl-rule"><div class="sl-rule-line"></div><div class="sl-rule-mark"></div><div class="sl-rule-line"></div></div>
+        <div class="sl-lede">"A workshop hewn into the rock — where the small, weird, useful things get built around real problems."</div>
+        <div class="sl-projects">
+          <div class="sl-proj">
+            <div class="proj-head"><span class="proj-t">Nerd Market</span><span class="proj-st">Full-stack · 2025</span></div>
+            <div class="proj-d">A stock-ticker-style price tracker for Pokémon, Magic: The Gathering, and other TCG markets. Spring Boot backend, MariaDB, OpenCV card recognition, and TCGPlayer/Scryfall APIs — treating cards like market assets.</div>
+            <div class="proj-stack"><span class="proj-tag">Java</span><span class="proj-tag">Spring Boot</span><span class="proj-tag">MariaDB</span><span class="proj-tag">OpenCV</span><span class="proj-tag">TCGPlayer API</span></div>
+          </div>
+          <div class="sl-proj">
+            <div class="proj-head"><span class="proj-t">Outpost</span><span class="proj-st">Hardware · 2025</span></div>
+            <div class="proj-d">A portable offline survival computer on a Raspberry Pi 5 — preloaded with Wikipedia, survival manuals, maps, and a local Ollama Phi-3 model. Zero internet dependency.</div>
+            <div class="proj-stack"><span class="proj-tag">Raspberry Pi 5</span><span class="proj-tag">Ollama</span><span class="proj-tag">Phi-3</span><span class="proj-tag">Linux</span><span class="proj-tag">Offline-first</span></div>
+          </div>
+          <div class="sl-proj">
+            <div class="proj-head"><span class="proj-t">HelpLlama</span><span class="proj-st">ML · 2025</span></div>
+            <div class="proj-d">A Python helpdesk chatbot that parses internal DOCX, PDF, and TXT documentation to answer IT support questions in context. Built around a real pain point: useful information exists but nobody can find it fast enough.</div>
+            <div class="proj-stack"><span class="proj-tag">Python</span><span class="proj-tag">LangChain</span><span class="proj-tag">RAG</span><span class="proj-tag">Local LLM</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: III Highland — Cambridge -->
+      <div class="slide" data-i="3">
+        <div class="slide-watermark">III</div>
+        <div class="sl-badge">
+          <span class="sl-num">Station III · The Highland</span>
+          <span class="sl-elev">3,840 ft</span>
+        </div>
+        <div class="sl-title">Cambridge <em>Investments</em></div>
+        <div class="sl-sub">IT Infrastructure Engineer · HCI Team · 2024 — 2025</div>
+        <div class="sl-rule"><div class="sl-rule-line"></div><div class="sl-rule-mark"></div><div class="sl-rule-line"></div></div>
+        <div class="sl-lede">"A year above the treeline. Enterprise infrastructure that quietly keeps everything alive — until something breaks and everyone suddenly remembers it exists."</div>
+        <div class="sl-grid">
+          <div class="sl-hl"><div class="hl-k">Stint</div><div class="hl-v"><em>2024–25</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Stack</div><div class="hl-v">Win Server <em>2025</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Exchange</div><div class="hl-v"><em>99.9%</em> up</div></div>
+          <div class="sl-hl"><div class="hl-k">Location</div><div class="hl-v">Fairfield, <em>IA</em></div></div>
+        </div>
+        <div class="sl-section-head">Notable moments</div>
+        <ul class="sl-moments">
+          <li>Configured and deployed Windows Server 2025 inside VMware to support Active Directory and file-sharing services.</li>
+          <li>Built an isolated AD sandbox environment for safely testing new products and configurations before touching production.</li>
+          <li>Developed Group Policy hardening baselines that set a new endpoint security standard across the environment.</li>
+          <li>Managed Exchange settings, monitored infrastructure health, and assisted with outage response and root cause analysis.</li>
+          <li>Participated in post-incident reviews to identify long-term fixes rather than recurring temporary patches.</li>
+        </ul>
+        <div class="sl-tags">
+          <span class="sl-tag">Win Server 2025</span><span class="sl-tag">VMware</span><span class="sl-tag">Active Directory</span><span class="sl-tag">Group Policy</span><span class="sl-tag">Exchange</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: II Crossing — IT Support -->
+      <div class="slide" data-i="4">
+        <div class="slide-watermark">II</div>
+        <div class="sl-badge">
+          <span class="sl-num">Station II · The Crossing</span>
+          <span class="sl-elev">2,280 ft</span>
+        </div>
+        <div class="sl-title">ISU <em>IT Solution Center</em></div>
+        <div class="sl-sub">Team Lead · Senior Technical Support · 2023 — Present</div>
+        <div class="sl-rule"><div class="sl-rule-line"></div><div class="sl-rule-mark"></div><div class="sl-rule-line"></div></div>
+        <div class="sl-lede">"Frontline IT for a campus of tens of thousands. The first crossing — where a student learns to lead a team and own a process."</div>
+        <div class="sl-grid">
+          <div class="sl-hl"><div class="hl-k">Role</div><div class="hl-v"><em>Team Lead</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Since</div><div class="hl-v">2023 — <em>now</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Manages</div><div class="hl-v"><em>10–15</em> techs</div></div>
+          <div class="sl-hl"><div class="hl-k">Onboarding</div><div class="hl-v">6 wk → <em>2 wk</em></div></div>
+        </div>
+        <div class="sl-section-head">Notable moments</div>
+        <ul class="sl-moments">
+          <li>Rebuilt new-hire onboarding from scratch, cutting ramp time from six weeks to two.</li>
+          <li>Standardized ticket templates for the highest-volume issue categories across the team.</li>
+          <li>Authored knowledge-base articles that measurably improved first-call resolution rates.</li>
+          <li>Managed daily operations, scheduling, and technical escalations for a rotating team of student technicians.</li>
+        </ul>
+        <div class="sl-tags">
+          <span class="sl-tag">Team Lead</span><span class="sl-tag">10–15 Techs</span><span class="sl-tag">Onboarding 6→2wk</span><span class="sl-tag">Knowledge Base</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: I Trailhead — ISU -->
+      <div class="slide" data-i="5">
+        <div class="slide-watermark">I</div>
+        <div class="sl-badge">
+          <span class="sl-num">Station I · The Trailhead</span>
+          <span class="sl-elev">1,460 ft</span>
+        </div>
+        <div class="sl-title">Iowa State <em>University</em></div>
+        <div class="sl-sub">B.S. Cyber Security Engineering · Class of '27</div>
+        <div class="sl-rule"><div class="sl-rule-line"></div><div class="sl-rule-mark"></div><div class="sl-rule-line"></div></div>
+        <div class="sl-lede">"Where the path begins. Systems, networks, cryptography, and the math that makes secure infrastructure behave."</div>
+        <div class="sl-grid">
+          <div class="sl-hl"><div class="hl-k">Program</div><div class="hl-v"><em>B.S.</em> CSE</div></div>
+          <div class="sl-hl"><div class="hl-k">Since</div><div class="hl-v">Fall <em>2023</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Graduates</div><div class="hl-v">Spring <em>2027</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Campus</div><div class="hl-v"><em>Ames</em>, IA</div></div>
+        </div>
+        <div class="sl-section-head">Notable moments</div>
+        <ul class="sl-moments">
+          <li>Built a hardware-scheduled, five-stage pipelined RISC-V processor at the assembly level.</li>
+          <li>Deployed enterprise LDAP, DNS, web, mail, and security servers in hardening labs.</li>
+          <li>Completed penetration testing environments and networked systems coursework.</li>
+          <li>Coursework: cryptography, computer architecture, data structures, embedded systems, networking protocols, software project management.</li>
+        </ul>
+        <div class="sl-tags">
+          <span class="sl-tag">Cryptography</span><span class="sl-tag">RISC-V</span><span class="sl-tag">Pen Testing</span><span class="sl-tag">Networking</span><span class="sl-tag">Embedded</span>
+        </div>
+      </div>
+
+    </div><!-- slide-win -->
+
+    <div class="content-nav">
+      <button class="nav-arr" id="navUp" onclick="go(-1)">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+          <polyline points="1,6 4.5,2 8,6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Higher
+      </button>
+      <div class="nav-dots" id="navDots"></div>
+      <button class="nav-arr" id="navDown" onclick="go(1)">
+        Lower
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+          <polyline points="1,3 4.5,7 8,3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div><!-- content-col -->
+
+</div><!-- main -->
+</div><!-- screens -->
+
+<script>
+const TOTAL = 6;
+let cur = 0;
+let tramAnimId = null;
+
+/* Tram node positions (matching SVG coordinates) */
+const NODE_POS = [
+  {x:150, y:82},   // VI summit
+  {x:162, y:192},  // V cache
+  {x:166, y:248},  // IV atelier
+  {x:155, y:302},  // III highland
+  {x:145, y:358},  // II crossing
+  {x:108, y:462},  // I trailhead
+];
+
+const tramCar  = document.getElementById('tramCar');
+const activeRing = document.getElementById('activeRing');
+const slides   = document.querySelectorAll('.slide');
+const dotsEl   = document.getElementById('navDots');
+
+/* Current tram position (animated) */
+let tramX = NODE_POS[0].x;
+let tramY = NODE_POS[0].y;
+
+/* Build dots */
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('button');
+  d.className = 'ndot' + (i === 0 ? ' on' : '');
+  d.onclick = () => jumpTo(i);
+  dotsEl.appendChild(d);
+}
+
+/* Animate tram smoothly to target */
+function animateTram(tx, ty) {
+  if (tramAnimId) cancelAnimationFrame(tramAnimId);
+  function step() {
+    const dx = tx - tramX, dy = ty - tramY;
+    if (Math.abs(dx) < 0.3 && Math.abs(dy) < 0.3) {
+      tramX = tx; tramY = ty;
+      applyTramPos();
+      return;
+    }
+    tramX += dx * 0.09;
+    tramY += dy * 0.09;
+    applyTramPos();
+    tramAnimId = requestAnimationFrame(step);
+  }
+  tramAnimId = requestAnimationFrame(step);
+}
+
+function applyTramPos() {
+  tramCar.setAttribute('transform', `translate(${tramX.toFixed(2)},${tramY.toFixed(2)})`);
+}
+
+function updateActiveRing(idx) {
+  const p = NODE_POS[idx];
+  activeRing.setAttribute('cx', p.x);
+  activeRing.setAttribute('cy', p.y);
+}
+
+function updateUI() {
+  /* dots */
+  document.querySelectorAll('.ndot').forEach((d,i) => d.classList.toggle('on', i === cur));
+  /* nav buttons */
+  document.getElementById('navUp').disabled   = cur === 0;
+  document.getElementById('navDown').disabled = cur === TOTAL - 1;
+  /* node highlights */
+  document.querySelectorAll('.snode circle').forEach((c, i) => {
+    c.setAttribute('fill', i === cur ? '#3a6e30' : 'var(--paper)');
+    c.nextElementSibling && (c.nextElementSibling.style.fill = i === cur ? 'var(--paper)' : '#244d1e');
+  });
+  /* active ring */
+  updateActiveRing(cur);
+  /* tram */
+  animateTram(NODE_POS[cur].x, NODE_POS[cur].y);
+}
+
+function showSlide(idx, direction) {
+  slides.forEach(s => {
+    s.classList.remove('active','leaving');
+  });
+  slides[idx].classList.add('active');
+}
+
+function go(dir) {
+  const next = cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  const old = slides[cur];
+  cur = next;
+  old.classList.add('leaving');
+  setTimeout(() => old.classList.remove('leaving'), 480);
+  showSlide(cur);
+  updateUI();
+}
+
+function jumpTo(i) {
+  if (i === cur) return;
+  const old = slides[cur];
+  cur = i;
+  old.classList.add('leaving');
+  setTimeout(() => old.classList.remove('leaving'), 480);
+  showSlide(cur);
+  updateUI();
+}
+
+function enter() {
+  document.getElementById('landing').classList.add('out');
+  document.getElementById('main').classList.add('in');
+  updateUI();
+}
+function leave() {
+  document.getElementById('main').classList.remove('in');
+  document.getElementById('landing').classList.remove('out');
+}
+
+/* Keyboard */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); }
+  if (e.key === 'Escape') leave();
+});
+
+/* Init */
+applyTramPos();
+updateUI();
+</script>
+</body>
+</html>

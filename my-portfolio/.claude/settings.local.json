@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/Cooperfolio_2/**)",
+      "Read(//d/Cooper-Portfolio/**)",
+      "Bash(npm run:*)",
+      "Bash(npm --version)",
+      "Bash(git -C D:/Cooperfolio/my-portfolio log --oneline -3)",
+      "Bash(git -C D:/Cooperfolio/my-portfolio remote get-url origin)",
+      "Bash(git -C D:/Cooperfolio/my-portfolio rev-parse --show-toplevel)"
+    ]
+  }
+}

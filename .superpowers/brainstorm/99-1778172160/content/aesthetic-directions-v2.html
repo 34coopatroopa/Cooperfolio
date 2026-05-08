@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aesthetic Directions v2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #060400;
+    color: #ffb300;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    padding: 28px 20px 64px;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.09) 2px,rgba(0,0,0,0.09) 4px);
+    pointer-events: none; z-index: 999;
+  }
+
+  h1 { font-size: 10px; letter-spacing:.38em; text-transform:uppercase; color:#ffb30055; margin-bottom:5px; font-weight:normal; }
+  h2 { font-size: 20px; font-weight:normal; color:#ffb300; margin-bottom:5px; text-shadow:0 0 18px rgba(255,179,0,.45); }
+  .sub { font-size:11px; color:#ffb30055; letter-spacing:.14em; margin-bottom:28px; }
+
+  .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+
+  .card {
+    border: 1px solid #ffb30028;
+    background: #050300;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+    position: relative;
+  }
+  .card:hover { border-color: #ffb30066; }
+  .card.selected {
+    border-color: #ffb300;
+    box-shadow: 0 0 28px rgba(255,179,0,0.18), inset 0 0 50px rgba(255,179,0,0.03);
+  }
+  .card.selected::after {
+    content:'✓ SELECTED';
+    position:absolute; top:10px; right:10px;
+    font-size:8px; letter-spacing:.2em; color:#ffb300;
+    background:#050300; padding:3px 8px;
+    border:1px solid #ffb30055; z-index:20;
+  }
+
+  .card-preview { height:260px; position:relative; overflow:hidden; }
+
+  .card-body { padding:14px 16px 18px; border-top:1px solid #ffb30018; }
+  .card-letter { font-size:9px; letter-spacing:.3em; color:#ffb30044; margin-bottom:4px; }
+  .card-title { font-size:13px; color:#ffb300; margin-bottom:5px; text-shadow:0 0 8px rgba(255,179,0,.35); }
+  .card-desc { font-size:11px; color:#ffb30066; line-height:1.65; }
+  .tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:9px; }
+  .tag { font-size:8.5px; letter-spacing:.15em; padding:2px 6px; border:1px solid #ffb30028; color:#ffb30055; }
+
+  .footer { font-size:10px; color:#ffb30033; letter-spacing:.14em; text-align:center; margin-bottom:60px; }
+
+  .sel-bar {
+    position:fixed; bottom:0; left:0; right:0;
+    background:#060400; border-top:1px solid #ffb30022;
+    padding:12px 20px; display:flex; align-items:center; justify-content:space-between;
+    z-index:1000; font-size:10px; letter-spacing:.18em; color:#ffb30044;
+  }
+
+  /* ── A: ASCII Peak ── */
+  .prev-a {
+    background:#000;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:0;
+  }
+  .ascii-mtn {
+    font-size:8.5px; line-height:1.18; color:#ffb300;
+    text-shadow:0 0 7px rgba(255,179,0,.9);
+    white-space:pre; margin-bottom:10px;
+    animation: flicker 6s ease-in-out infinite;
+  }
+  @keyframes flicker { 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:.85} 94%{opacity:1} 97%{opacity:.92} 98%{opacity:1} }
+  .ascii-range {
+    font-size:7.5px; line-height:1.12; color:#ffb300;
+    text-shadow:0 0 4px rgba(255,179,0,.5);
+    white-space:pre; opacity:.5; margin-bottom:14px;
+  }
+  .a-carousel { display:flex; gap:3px; }
+  .a-ci { border:1px solid #ffb30033; padding:3px 10px; font-size:8px; letter-spacing:.14em; color:#ffb30055; }
+  .a-ci.on { border-color:#ffb300; color:#ffb300; background:rgba(255,179,0,.07); text-shadow:0 0 6px rgba(255,179,0,.5); }
+  .a-prompt { font-size:8px; color:#ffb30044; margin-top:10px; letter-spacing:.1em; }
+  .a-prompt b { color:#ffb300; animation:blink 1s step-end infinite; }
+  @keyframes blink { 50%{opacity:0} }
+
+  /* ── B: SVG Wireframe ── */
+  .prev-b { background:#020100; position:relative; }
+  .prev-b svg { width:100%; height:100%; }
+
+  /* ── C: Filled Silhouette + Overlay ── */
+  .prev-c {
+    background:#010100;
+    position:relative;
+    display:flex; flex-direction:column;
+  }
+  .prev-c svg.silhouette { width:100%; flex:1; }
+  .prev-c .overlay {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:12px;
+  }
+  .prev-c .data-strip {
+    background:rgba(0,0,0,.55);
+    border:1px solid #ffb30022;
+    padding:8px 10px;
+    display:grid; grid-template-columns:1fr 1fr; gap:3px 16px;
+    margin-bottom:8px;
+  }
+  .prev-c .dr { font-size:8px; letter-spacing:.1em; }
+  .prev-c .dk { color:#ffb30044; }
+  .prev-c .dv { color:#ffb300; text-shadow:0 0 5px rgba(255,179,0,.4); }
+  .prev-c .tab-row { display:flex; border:1px solid #ffb30033; }
+  .prev-c .tab { flex:1; text-align:center; padding:4px 2px; font-size:7.5px; letter-spacing:.1em; color:#ffb30044; border-right:1px solid #ffb30022; }
+  .prev-c .tab:last-child { border-right:none; }
+  .prev-c .tab.on { color:#ffb300; background:rgba(255,179,0,.06); }
+</style>
+<script>
+  function selectCard(el, choice) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('sel-text').textContent = 'SELECTED: ' + choice.toUpperCase();
+    if (window.__companionEmit) window.__companionEmit({type:'click', choice, text: el.querySelector('.card-title').textContent});
+  }
+</script>
+</head>
+<body>
+
+<h1>// REDESIGN · DIRECTION SELECT</h1>
+<h2>Amber Phosphor Mountain</h2>
+<p class="sub">PICK THE MOUNTAIN TREATMENT THAT FEELS RIGHT</p>
+
+<div class="cards">
+
+  <!-- A: ASCII PEAK -->
+  <div class="card" onclick="selectCard(this,'a')">
+    <div class="card-preview prev-a">
+      <pre class="ascii-mtn">            *
+           /|\
+          / | \
+         /  |  \
+        / * | * \
+       /  \_^_/  \
+      /  /     \  \
+     / /    *    \ \
+    //_____________\\</pre>
+      <pre class="ascii-range">  ^^^   ^   ^  ^^^  ^^
+ ^   ^ ^ ^ ^ ^   ^  ^
+^     ^   ^   ^   ^^^</pre>
+      <div class="a-carousel">
+        <div class="a-ci">I</div>
+        <div class="a-ci on">II</div>
+        <div class="a-ci">III</div>
+        <div class="a-ci">IV</div>
+        <div class="a-ci">V</div>
+        <div class="a-ci">VI</div>
+      </div>
+      <div class="a-prompt">root@cooperhoy ~ $ <b>█</b></div>
+    </div>
+    <div class="card-body">
+      <div class="card-letter">OPTION A</div>
+      <div class="card-title">ASCII Peak</div>
+      <div class="card-desc">Mountain lives as glowing ASCII art — maximal phosphor effect. Carousel is a minimal selector strip. CRT flicker, scanlines, blinking cursor.</div>
+      <div class="tags">
+        <span class="tag">ASCII ART</span><span class="tag">FULL HACKER</span><span class="tag">CRT FLICKER</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: WIREFRAME GLOW -->
+  <div class="card" onclick="selectCard(this,'b')">
+    <div class="card-preview prev-b">
+      <svg viewBox="0 0 300 260" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="gB" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2.2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="gBsm" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1.2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffb300" stop-opacity="0.0"/>
+            <stop offset="100%" stop-color="#ffb300" stop-opacity="0.18"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Perspective grid floor -->
+        <line x1="0" y1="220" x2="300" y2="220" stroke="#ffb300" stroke-opacity=".06"/>
+        <line x1="0" y1="240" x2="300" y2="240" stroke="#ffb300" stroke-opacity=".04"/>
+        <line x1="150" y1="220" x2="0"   y2="260" stroke="#ffb300" stroke-opacity=".05"/>
+        <line x1="150" y1="220" x2="300" y2="260" stroke="#ffb300" stroke-opacity=".05"/>
+        <line x1="150" y1="220" x2="60"  y2="260" stroke="#ffb300" stroke-opacity=".03"/>
+        <line x1="150" y1="220" x2="240" y2="260" stroke="#ffb300" stroke-opacity=".03"/>
+        <line x1="150" y1="220" x2="110" y2="260" stroke="#ffb300" stroke-opacity=".03"/>
+        <line x1="150" y1="220" x2="190" y2="260" stroke="#ffb300" stroke-opacity=".03"/>
+
+        <!-- Distant far ridge -->
+        <polyline points="0,200 28,190 55,182 80,170 95,162 108,148 118,138 128,122 136,105 142,90 148,75 150,58 152,75 158,92 164,108 172,125 182,142 196,162 215,175 238,186 265,194 300,202"
+          stroke="#ffb300" stroke-width="0.7" stroke-opacity=".2" fill="none"/>
+
+        <!-- Mid ridge left peak -->
+        <polyline points="0,210 20,202 45,195 65,185 78,175 88,162 96,148 102,132 106,112 109,88 111,65"
+          stroke="#ffb300" stroke-width="0.9" stroke-opacity=".35" fill="none"/>
+
+        <!-- Mid ridge right peak -->
+        <polyline points="189,65 192,80 196,100 202,122 210,145 220,162 232,175 248,186 268,196 300,208"
+          stroke="#ffb300" stroke-width="0.9" stroke-opacity=".35" fill="none"/>
+
+        <!-- Main summit ridge -->
+        <polyline points="0,215 22,208 44,200 62,192 76,182 86,170 94,156 100,138 105,116 110,90 114,64 118,38 122,16 126,4 130,16 134,38 138,64 143,90 148,118 154,142 160,160 168,175 178,186 192,196 214,204 240,210 270,214 300,218"
+          stroke="#ffb300" stroke-width="1.5" stroke-opacity=".85" fill="none" filter="url(#gB)"/>
+
+        <!-- Sub-ridges on main peak -->
+        <polyline points="62,192 72,178 80,162 86,142 91,118 96,90 100,62 104,38"
+          stroke="#ffb300" stroke-width="0.6" stroke-opacity=".3" fill="none"/>
+        <polyline points="238,210 226,198 216,184 208,168 202,148 197,125 193,100 190,72"
+          stroke="#ffb300" stroke-width="0.6" stroke-opacity=".3" fill="none"/>
+
+        <!-- Summit glow -->
+        <circle cx="126" cy="4" r="3.5" fill="#ffb300" fill-opacity=".95" filter="url(#gB)"/>
+        <circle cx="126" cy="4" r="8" fill="#ffb300" fill-opacity=".12" filter="url(#gB)"/>
+
+        <!-- Station nodes -->
+        <circle cx="62"  cy="192" r="2.5" fill="#ffb300" fill-opacity=".7" filter="url(#gBsm)"/>
+        <circle cx="100" cy="138" r="2.5" fill="#ffb300" fill-opacity=".7" filter="url(#gBsm)"/>
+        <circle cx="114" cy="64"  r="2.5" fill="#ffb300" fill-opacity=".7" filter="url(#gBsm)"/>
+        <circle cx="154" cy="142" r="2.5" fill="#ffb300" fill-opacity=".7" filter="url(#gBsm)"/>
+        <circle cx="192" cy="196" r="2.5" fill="#ffb300" fill-opacity=".7" filter="url(#gBsm)"/>
+
+        <!-- Station labels -->
+        <text x="44"  y="190" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".55">I</text>
+        <text x="84"  y="136" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".55">II</text>
+        <text x="98"  y="60"  font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".55">III</text>
+        <text x="158" y="140" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".55">IV</text>
+        <text x="196" y="194" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".55">V</text>
+
+        <!-- Elevation markers right -->
+        <text x="276" y="60"  font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".22">6643'</text>
+        <text x="276" y="100" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".18">5540'</text>
+        <text x="276" y="145" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".14">3840'</text>
+        <text x="276" y="198" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".12">1460'</text>
+        <!-- Tick marks -->
+        <line x1="268" y1="56"  x2="273" y2="56"  stroke="#ffb300" stroke-opacity=".25" stroke-width="0.8"/>
+        <line x1="268" y1="96"  x2="273" y2="96"  stroke="#ffb300" stroke-opacity=".2"  stroke-width="0.8"/>
+        <line x1="268" y1="141" x2="273" y2="141" stroke="#ffb300" stroke-opacity=".16" stroke-width="0.8"/>
+        <line x1="268" y1="194" x2="273" y2="194" stroke="#ffb300" stroke-opacity=".14" stroke-width="0.8"/>
+
+        <!-- Carousel strip at bottom -->
+        <rect x="0" y="228" width="300" height="32" fill="rgba(0,0,0,0.6)"/>
+        <line x1="0" y1="228" x2="300" y2="228" stroke="#ffb300" stroke-opacity=".18"/>
+        <text x="10"  y="248" font-family="Courier New" font-size="8.5" fill="#ffb300" fill-opacity=".45">I · EDU</text>
+        <text x="65"  y="248" font-family="Courier New" font-size="8.5" fill="#ffb300" fill-opacity=".9">II · WORK</text>
+        <rect x="60" y="230" width="56" height="28" fill="rgba(255,179,0,0.06)" stroke="#ffb300" stroke-opacity=".4" stroke-width="0.8"/>
+        <text x="128" y="248" font-family="Courier New" font-size="8.5" fill="#ffb300" fill-opacity=".45">III · INFRA</text>
+        <text x="196" y="248" font-family="Courier New" font-size="8.5" fill="#ffb300" fill-opacity=".45">IV · BUILD</text>
+        <text x="260" y="248" font-family="Courier New" font-size="8.5" fill="#ffb300" fill-opacity=".45">V ··</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <div class="card-letter">OPTION B</div>
+      <div class="card-title">Wireframe Glow</div>
+      <div class="card-desc">Full SVG wireframe mountain with multiple ridges, elevation markers, glowing summit, perspective grid floor. Stations as lit nodes along the ascent.</div>
+      <div class="tags">
+        <span class="tag">SVG WIREFRAME</span><span class="tag">MULTI-RIDGE</span><span class="tag">ELEV MARKERS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- C: SILHOUETTE + SCAN -->
+  <div class="card" onclick="selectCard(this,'c')">
+    <div class="card-preview prev-c">
+      <svg class="silhouette" viewBox="0 0 300 220" fill="none" preserveAspectRatio="xMidYMax meet">
+        <defs>
+          <filter id="gC">
+            <feGaussianBlur stdDeviation="2.5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="mtnFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffb300" stop-opacity="0.14"/>
+            <stop offset="100%" stop-color="#ffb300" stop-opacity="0.04"/>
+          </linearGradient>
+          <!-- Scanline pattern -->
+          <pattern id="scan" x="0" y="0" width="300" height="3" patternUnits="userSpaceOnUse">
+            <rect width="300" height="1" y="2" fill="#ffb300" fill-opacity=".04"/>
+          </pattern>
+        </defs>
+
+        <!-- Background grid -->
+        <line x1="0" y1="55"  x2="300" y2="55"  stroke="#ffb300" stroke-opacity=".04"/>
+        <line x1="0" y1="90"  x2="300" y2="90"  stroke="#ffb300" stroke-opacity=".04"/>
+        <line x1="0" y1="125" x2="300" y2="125" stroke="#ffb300" stroke-opacity=".04"/>
+        <line x1="0" y1="160" x2="300" y2="160" stroke="#ffb300" stroke-opacity=".04"/>
+        <line x1="75"  y1="0" x2="75"  y2="220" stroke="#ffb300" stroke-opacity=".03"/>
+        <line x1="150" y1="0" x2="150" y2="220" stroke="#ffb300" stroke-opacity=".03"/>
+        <line x1="225" y1="0" x2="225" y2="220" stroke="#ffb300" stroke-opacity=".03"/>
+
+        <!-- Far ridge filled -->
+        <polygon points="0,180 30,165 60,150 85,138 105,125 120,110 132,95 140,80 146,65 150,52 154,65 160,82 168,98 178,115 192,132 210,148 232,162 260,172 300,182 300,220 0,220"
+          fill="url(#mtnFill)"/>
+        <polyline points="0,180 30,165 60,150 85,138 105,125 120,110 132,95 140,80 146,65 150,52 154,65 160,82 168,98 178,115 192,132 210,148 232,162 260,172 300,182"
+          stroke="#ffb300" stroke-width="0.8" stroke-opacity=".3" fill="none"/>
+
+        <!-- Main filled mountain -->
+        <polygon points="0,200 25,193 48,185 65,175 78,163 88,148 95,130 100,108 105,82 110,55 115,28 120,8 124,1 128,8 133,28 138,56 143,84 148,110 153,132 159,150 167,166 178,178 195,188 218,196 248,202 280,207 300,210 300,220 0,220"
+          fill="url(#mtnFill)"/>
+        <!-- Outline glow -->
+        <polyline points="0,200 25,193 48,185 65,175 78,163 88,148 95,130 100,108 105,82 110,55 115,28 120,8 124,1 128,8 133,28 138,56 143,84 148,110 153,132 159,150 167,166 178,178 195,188 218,196 248,202 280,207 300,210"
+          stroke="#ffb300" stroke-width="1.4" stroke-opacity=".8" fill="none" filter="url(#gC)"/>
+
+        <!-- Snow cap shading -->
+        <polygon points="115,28 120,8 124,1 128,8 133,28 129,35 124,30 119,35"
+          fill="#ffb300" fill-opacity=".22"/>
+
+        <!-- Scan overlay -->
+        <rect x="0" y="0" width="300" height="220" fill="url(#scan)"/>
+
+        <!-- Scanning line animation effect (static representation) -->
+        <line x1="0" y1="88" x2="300" y2="88" stroke="#ffb300" stroke-opacity=".18" stroke-width="1"/>
+
+        <!-- Station markers on ridge -->
+        <circle cx="65"  cy="175" r="3" fill="#ffb300" opacity=".7" filter="url(#gC)"/>
+        <circle cx="95"  cy="130" r="3" fill="#ffb300" opacity=".7" filter="url(#gC)"/>
+        <circle cx="110" cy="55"  r="3" fill="#ffb300" opacity=".7" filter="url(#gC)"/>
+        <circle cx="153" cy="132" r="3" fill="#ffb300" opacity=".7" filter="url(#gC)"/>
+        <circle cx="178" cy="178" r="3" fill="#ffb300" opacity=".7" filter="url(#gC)"/>
+        <circle cx="124" cy="1"   r="4" fill="#ffb300" opacity=".95" filter="url(#gC)"/>
+
+        <!-- Connector lines from stations down -->
+        <line x1="65"  y1="175" x2="65"  y2="210" stroke="#ffb300" stroke-opacity=".2" stroke-width=".6" stroke-dasharray="2,3"/>
+        <line x1="95"  y1="130" x2="95"  y2="210" stroke="#ffb300" stroke-opacity=".2" stroke-width=".6" stroke-dasharray="2,3"/>
+        <line x1="110" y1="55"  x2="110" y2="210" stroke="#ffb300" stroke-opacity=".2" stroke-width=".6" stroke-dasharray="2,3"/>
+        <line x1="153" y1="132" x2="153" y2="210" stroke="#ffb300" stroke-opacity=".2" stroke-width=".6" stroke-dasharray="2,3"/>
+        <line x1="178" y1="178" x2="178" y2="210" stroke="#ffb300" stroke-opacity=".2" stroke-width=".6" stroke-dasharray="2,3"/>
+
+        <!-- Station labels at bottom -->
+        <text x="52"  y="218" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".5">I</text>
+        <text x="82"  y="218" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".5">II</text>
+        <text x="97"  y="218" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".5">III</text>
+        <text x="140" y="218" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".5">IV</text>
+        <text x="165" y="218" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".5">V</text>
+
+        <!-- Elev labels -->
+        <text x="254" y="10" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".3">6,643 ft</text>
+        <text x="254" y="58" font-family="Courier New" font-size="7" fill="#ffb300" fill-opacity=".22">5,540 ft</text>
+        <text x="6"   y="10" font-family="Courier New" font-size="7.5" fill="#ffb300" fill-opacity=".35">ELEV ↑</text>
+      </svg>
+
+      <div class="overlay">
+        <div class="data-strip">
+          <div class="dr"><span class="dk">IDENT </span><span class="dv">COOPER HOY</span></div>
+          <div class="dr"><span class="dk">ROLE  </span><span class="dv">SEC ENG</span></div>
+          <div class="dr"><span class="dk">PEAK  </span><span class="dv">6,643 ft</span></div>
+          <div class="dr"><span class="dk">STA   </span><span class="dv">6 NODES</span></div>
+        </div>
+        <div class="tab-row">
+          <div class="tab">I·EDU</div>
+          <div class="tab on">II·WORK</div>
+          <div class="tab">III·INFRA</div>
+          <div class="tab">IV·BUILD</div>
+          <div class="tab">V·KIT</div>
+          <div class="tab">VI·FTC</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="card-letter">OPTION C</div>
+      <div class="card-title">Silhouette + Scanline</div>
+      <div class="card-desc">Filled amber mountain silhouette with scanline texture, dashed station drop-lines, data strip overlay, and tab carousel. Dense, atmospheric.</div>
+      <div class="tags">
+        <span class="tag">FILLED SILHOUETTE</span><span class="tag">SCANLINES</span><span class="tag">DATA OVERLAY</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="footer">CLICK A CARD TO SELECT · COMMENT IN TERMINAL</p>
+
+<div class="sel-bar">
+  <span>// AESTHETIC DIRECTION · V2</span>
+  <span id="sel-text" style="color:#ffb30033">NO SELECTION</span>
+</div>
+
+<script src="../../../../../../../Users/34coo/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/brainstorming/scripts/helper.js"></script>
+</body>
+</html>

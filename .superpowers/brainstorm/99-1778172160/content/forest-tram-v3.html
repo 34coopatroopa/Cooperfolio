@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cooper Hoy — Forest Tram v3</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cream:#f3ede0; --paper:#ebe4ce; --parchment:#e2d9c0;
+  --f1:#162a12; --f2:#224618; --f3:#356828; --f4:#4e8a3c; --f5:#72ac58; --f6:#a0cc84; --f7:#cce4b4;
+  --fog:#c0d8a4; --mist:#d8eccc;
+  --ink:#182814; --ink-mid:#445c38; --ink-dim:#708060; --ink-faint:#9eae90;
+  --amber:#a87e1e;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --ease:.5s cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;font-family:var(--sans);background:var(--cream);color:var(--ink);overflow:hidden;}
+
+/* ══ SCREENS ══ */
+.screens{width:100%;height:100%;position:relative;overflow:hidden;}
+
+/* ══ LANDING ══ */
+.landing{
+  position:absolute;inset:0;display:flex;flex-direction:column;z-index:2;
+  transition:transform .95s cubic-bezier(.77,0,.18,1),opacity .6s;
+}
+.landing.out{transform:translateY(-100%);opacity:0;pointer-events:none;}
+
+.hero{flex:1;position:relative;overflow:hidden;
+  background:linear-gradient(168deg,#162a12 0%,#224618 22%,#356828 46%,#4e8a3c 70%,#72ac58 100%);}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;z-index:1;}
+.hero-overlay{
+  position:absolute;inset:0;z-index:2;
+  background:
+    radial-gradient(ellipse at 18% 25%,rgba(160,204,132,.14) 0%,transparent 55%),
+    linear-gradient(to top,rgba(22,42,18,.92) 0%,rgba(22,42,18,.3) 45%,transparent 75%);
+}
+/* Tree silhouette */
+.hero-trees{position:absolute;bottom:0;left:0;right:0;height:46%;z-index:3;pointer-events:none;}
+/* Name */
+.hero-name{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:0 60px 52px;}
+.hero-name h1{font-family:var(--serif);font-size:68px;font-weight:300;line-height:1;color:#f3ede0;
+  text-shadow:0 2px 28px rgba(0,0,0,.4);letter-spacing:.01em;}
+.hero-name h1 em{font-style:italic;color:#c0dea0;}
+.hero-name .tag{font-family:var(--mono);font-size:10px;letter-spacing:.38em;color:#9ec87e;text-transform:uppercase;margin-top:9px;}
+
+/* centered enter button */
+.enter-zone{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.enter-btn{
+  pointer-events:auto;background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  animation:breathe 3.2s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.ring{
+  width:76px;height:76px;border-radius:50%;
+  border:1.5px solid rgba(192,222,160,.5);
+  background:rgba(22,42,18,.35);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;transition:border-color .3s,background .3s;
+}
+.ring::before{content:'';position:absolute;inset:-10px;border-radius:50%;
+  border:1px solid rgba(192,222,160,.2);animation:ripple 3s ease-out infinite;}
+.ring::after{content:'';position:absolute;inset:-22px;border-radius:50%;
+  border:1px solid rgba(192,222,160,.1);animation:ripple 3s ease-out .5s infinite;}
+@keyframes ripple{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.35);opacity:0}}
+.enter-btn:hover .ring{border-color:rgba(192,222,160,.95);background:rgba(22,42,18,.55);}
+.enter-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.34em;color:rgba(192,222,160,.75);text-transform:uppercase;transition:color .3s;}
+.enter-btn:hover .enter-label{color:rgba(192,222,160,1);}
+
+/* landing footer */
+.land-foot{background:var(--cream);border-top:1px solid var(--fog);padding:13px 60px;
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.foot-meta{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--ink-dim);text-transform:uppercase;}
+
+/* ══ MAIN ══ */
+.main{
+  position:absolute;inset:0;display:flex;
+  transform:translateY(100%);
+  transition:transform .95s cubic-bezier(.77,0,.18,1);
+  z-index:1;background:var(--cream);
+}
+.main.in{transform:translateY(0);z-index:3;}
+
+/* ══ MAP COLUMN ══ */
+.map-col{
+  width:330px;flex-shrink:0;
+  background:var(--paper);
+  border-right:1.5px solid var(--fog);
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+}
+.map-head{
+  padding:18px 22px 14px;border-bottom:1px solid var(--fog);
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+}
+.back-btn{background:none;border:none;cursor:pointer;
+  font-family:var(--mono);font-size:8px;letter-spacing:.22em;color:var(--ink-dim);
+  text-transform:uppercase;display:flex;align-items:center;gap:5px;transition:color .2s;padding:0;}
+.back-btn:hover{color:var(--f2);}
+.map-title-wrap{text-align:right;}
+.map-title{font-family:var(--serif);font-size:15px;font-weight:400;color:var(--ink);letter-spacing:.01em;}
+.map-sub{font-family:var(--mono);font-size:7.5px;letter-spacing:.2em;color:var(--ink-dim);text-transform:uppercase;margin-top:2px;}
+
+/* topo svg */
+.topo-wrap{flex:1;position:relative;overflow:hidden;}
+#topoSvg{width:100%;height:100%;}
+
+/* contact footer */
+.map-foot{border-top:1px solid var(--fog);padding:12px 22px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
+.clink{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:inherit;transition:color .2s;}
+.clink:hover{color:var(--f2);}
+.ck{font-family:var(--mono);font-size:7.5px;letter-spacing:.2em;color:var(--ink-dim);text-transform:uppercase;width:26px;flex-shrink:0;}
+.cv{font-size:11px;color:var(--ink-mid);}
+
+/* ══ CONTENT COL ══ */
+.content-col{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+
+/* slide window */
+.slide-win{flex:1;position:relative;overflow:hidden;}
+.slide{
+  position:absolute;inset:0;overflow-y:auto;
+  padding:40px 52px 24px;
+  opacity:0;pointer-events:none;
+  transform:translateY(32px);
+  transition:opacity .48s cubic-bezier(.4,0,.2,1),transform .48s cubic-bezier(.4,0,.2,1);
+}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0);}
+.slide.leaving{
+  opacity:0;transform:translateY(-32px);
+  transition:opacity .32s cubic-bezier(.4,0,.2,1),transform .32s cubic-bezier(.4,0,.2,1);
+}
+
+/* watermark */
+.wm{
+  position:absolute;right:36px;top:28px;
+  font-family:var(--serif);font-size:148px;font-weight:600;font-style:italic;
+  color:rgba(53,104,40,.045);line-height:1;pointer-events:none;user-select:none;
+}
+
+/* header */
+.sl-badge{display:flex;align-items:baseline;gap:14px;margin-bottom:7px;}
+.sl-num{font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;color:var(--f3);text-transform:uppercase;}
+.sl-elev{font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;color:var(--ink-faint);margin-left:auto;}
+.sl-title{font-family:var(--serif);font-size:38px;font-weight:300;color:var(--ink);line-height:1.12;margin-bottom:3px;}
+.sl-title em{font-style:italic;color:var(--f2);}
+.sl-sub{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--ink-dim);text-transform:uppercase;}
+
+/* image placeholder */
+.img-box{
+  width:100%;height:158px;
+  border:1px dashed var(--fog);
+  background:linear-gradient(135deg,rgba(72,140,60,.05) 0%,rgba(53,104,40,.03) 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;margin:18px 0;
+  position:relative;overflow:hidden;
+}
+.img-box::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(var(--fog) 1px,transparent 1px);
+  background-size:18px 18px;opacity:.35;
+}
+.img-box-leaf{position:absolute;right:16px;bottom:12px;opacity:.18;}
+.img-box-label{font-family:var(--mono);font-size:8.5px;letter-spacing:.25em;color:var(--ink-dim);text-transform:uppercase;position:relative;}
+.img-box-hint{font-size:10px;color:var(--ink-faint);position:relative;}
+
+/* decorative rule */
+.sl-rule{display:flex;align-items:center;gap:12px;margin:16px 0;}
+.sl-rule-line{flex:1;height:1px;background:var(--fog);}
+.sl-rule-mark{width:7px;height:7px;border:1.5px solid var(--f5);transform:rotate(45deg);flex-shrink:0;}
+/* foresty rule icon */
+.sl-rule-fern{flex-shrink:0;}
+
+/* lede */
+.sl-lede{
+  font-family:var(--serif);font-size:17.5px;font-weight:300;font-style:italic;
+  color:var(--ink-mid);line-height:1.8;margin-bottom:22px;
+  border-left:2px solid var(--f5);padding-left:18px;
+}
+
+/* highlights grid */
+.sl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--fog);margin-bottom:22px;}
+.sl-hl{background:var(--cream);padding:12px 12px;}
+.hl-k{font-family:var(--mono);font-size:7.5px;letter-spacing:.2em;color:var(--ink-dim);text-transform:uppercase;margin-bottom:4px;}
+.hl-v{font-family:var(--serif);font-size:17px;color:var(--ink);}
+.hl-v em{font-style:italic;color:var(--f2);}
+
+/* section head with foresty icon */
+.sh{display:flex;align-items:center;gap:9px;margin-bottom:11px;margin-top:2px;}
+.sh-line{flex:1;height:1px;background:var(--fog);}
+.sh-text{font-family:var(--mono);font-size:8.5px;letter-spacing:.28em;color:var(--ink-dim);text-transform:uppercase;white-space:nowrap;}
+.sh-icon{flex-shrink:0;opacity:.5;}
+
+/* moments */
+.sl-moments{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:22px;}
+.sl-moments li{font-size:13px;color:var(--ink-mid);line-height:1.72;padding-left:20px;position:relative;}
+.sl-moments li::before{
+  content:'';position:absolute;left:0;top:8px;
+  width:8px;height:8px;
+  border-top:1.5px solid var(--f4);border-right:1.5px solid var(--f4);
+  transform:rotate(45deg) scale(.65);
+}
+
+/* projects */
+.sl-projects{display:flex;flex-direction:column;gap:12px;margin-bottom:22px;}
+.sl-proj{background:var(--paper);border:1px solid var(--fog);padding:14px 16px;}
+.proj-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+.proj-t{font-family:var(--serif);font-size:17px;font-weight:400;color:var(--ink);}
+.proj-st{font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:var(--ink-dim);text-transform:uppercase;}
+.proj-d{font-size:12.5px;color:var(--ink-mid);line-height:1.65;margin-bottom:9px;}
+.proj-stack{display:flex;flex-wrap:wrap;gap:4px;}
+.ptag{font-family:var(--mono);font-size:8px;letter-spacing:.12em;padding:2px 7px;border:1px solid var(--fog);color:var(--ink-dim);text-transform:uppercase;}
+
+/* skills */
+.sl-skills{display:flex;flex-direction:column;gap:13px;margin-bottom:22px;}
+.sg-h{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--f3);text-transform:uppercase;margin-bottom:6px;}
+.sg-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.sg-tag{font-size:11.5px;color:var(--ink-mid);padding:4px 10px;background:var(--paper);border:1px solid var(--fog);font-family:var(--sans);font-weight:300;}
+
+/* bottom tags */
+.sl-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.sl-tag{font-family:var(--mono);font-size:8px;letter-spacing:.14em;padding:3px 9px;border:1px solid var(--f7);color:var(--ink-dim);text-transform:uppercase;background:rgba(78,138,60,.06);}
+
+/* ══ CONTENT NAV ══ */
+.content-nav{
+  border-top:1.5px solid var(--fog);padding:13px 52px;
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;
+  background:var(--cream);
+}
+.nav-arr{background:none;border:none;cursor:pointer;
+  font-family:var(--mono);font-size:9px;letter-spacing:.22em;
+  color:var(--ink-dim);text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;transition:color .2s;padding:0;}
+.nav-arr:hover{color:var(--f2);}
+.nav-arr:disabled{opacity:.18;cursor:default;}
+.nav-station-name{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--ink-dim);text-transform:uppercase;text-align:center;}
+.nav-dots{display:flex;gap:6px;align-items:center;flex-direction:column;}
+.ndot{width:5px;height:5px;border-radius:50%;background:var(--fog);cursor:pointer;
+  border:none;padding:0;transition:background .25s,transform .25s;}
+.ndot.on{background:var(--f2);transform:scale(1.55);}
+
+/* ══ LEAF SVG helper ══ */
+.leaf-deco{pointer-events:none;user-select:none;}
+</style>
+</head>
+<body>
+<div class="screens">
+
+<!-- ════════ LANDING ════════ -->
+<div class="landing" id="landing">
+  <div class="hero" id="heroArea">
+    <!-- swap in: <img src="photos/yourphoto.jpg"> -->
+
+    <!-- gradient overlay -->
+    <div class="hero-overlay"></div>
+
+    <!-- tree silhouette -->
+    <svg class="hero-trees" viewBox="0 0 1200 200" preserveAspectRatio="xMidYMax meet" fill="none">
+      <g fill="#162a12" opacity=".45">
+        <polygon points="0,200 22,132 44,200"/><polygon points="10,200 28,112 46,200"/>
+        <polygon points="64,200 86,138 108,200"/><polygon points="74,200 92,118 110,200"/>
+        <polygon points="128,200 150,134 172,200"/><polygon points="138,200 156,116 174,200"/>
+        <polygon points="192,200 214,130 236,200"/><polygon points="202,200 220,114 238,200"/>
+        <polygon points="256,200 278,136 300,200"/><polygon points="266,200 284,118 302,200"/>
+        <polygon points="320,200 342,128 364,200"/><polygon points="330,200 348,112 366,200"/>
+        <polygon points="384,200 406,134 428,200"/><polygon points="394,200 412,116 430,200"/>
+        <polygon points="448,200 470,130 492,200"/><polygon points="458,200 476,114 494,200"/>
+        <polygon points="512,200 534,136 556,200"/><polygon points="522,200 540,118 558,200"/>
+        <polygon points="576,200 598,128 620,200"/><polygon points="586,200 604,112 622,200"/>
+        <polygon points="640,200 662,134 684,200"/><polygon points="650,200 668,116 686,200"/>
+        <polygon points="704,200 726,130 748,200"/><polygon points="714,200 732,114 750,200"/>
+        <polygon points="768,200 790,136 812,200"/><polygon points="778,200 796,118 814,200"/>
+        <polygon points="832,200 854,128 876,200"/><polygon points="842,200 860,112 878,200"/>
+        <polygon points="896,200 918,134 940,200"/><polygon points="906,200 924,116 942,200"/>
+        <polygon points="960,200 982,130 1004,200"/><polygon points="970,200 988,114 1006,200"/>
+        <polygon points="1024,200 1046,136 1068,200"/><polygon points="1034,200 1052,118 1070,200"/>
+        <polygon points="1088,200 1110,128 1132,200"/><polygon points="1098,200 1116,112 1134,200"/>
+        <polygon points="1152,200 1174,134 1196,200"/><polygon points="1162,200 1180,116 1198,200"/>
+      </g>
+    </svg>
+
+    <!-- name block -->
+    <div class="hero-name">
+      <h1>Cooper <em>Hoy</em></h1>
+      <div class="tag">Cyber Security Engineering · Ames, Iowa</div>
+    </div>
+
+    <!-- center enter -->
+    <div class="enter-zone">
+      <button class="enter-btn" onclick="enter()">
+        <div class="ring">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <polyline points="4,8 10,14 16,8" stroke="rgba(192,222,160,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="enter-label">Enter the ascent</span>
+      </button>
+    </div>
+  </div>
+  <div class="land-foot">
+    <span class="foot-meta">An illustrated curriculum vitæ</span>
+    <span class="foot-meta">Plate I &nbsp;·&nbsp; 2025</span>
+  </div>
+</div>
+
+<!-- ════════ MAIN ════════ -->
+<div class="main" id="main">
+
+  <!-- MAP COL -->
+  <div class="map-col">
+    <div class="map-head">
+      <button class="back-btn" onclick="leave()">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+          <polyline points="5,1 2,4 5,7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        Back
+      </button>
+      <div class="map-title-wrap">
+        <div class="map-title">Ascent Map</div>
+        <div class="map-sub">Tram route · 6 stations</div>
+      </div>
+    </div>
+
+    <div class="topo-wrap">
+      <svg id="topoSvg" viewBox="0 0 330 520" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="topoFill" cx="50%" cy="22%" r="55%">
+            <stop offset="0%"  stop-color="#356828" stop-opacity=".25"/>
+            <stop offset="50%" stop-color="#4e8a3c" stop-opacity=".1"/>
+            <stop offset="100%" stop-color="#a0cc84" stop-opacity=".03"/>
+          </radialGradient>
+          <filter id="glow"><feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="nodeglow"><feGaussianBlur stdDeviation="2.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- paper bg -->
+        <rect width="330" height="520" fill="var(--paper)"/>
+
+        <!-- Topo grid -->
+        <g stroke="#c0d8a4" stroke-width=".5" opacity=".5">
+          <line x1="0" y1="87" x2="330" y2="87"/><line x1="0" y1="174" x2="330" y2="174"/>
+          <line x1="0" y1="261" x2="330" y2="261"/><line x1="0" y1="348" x2="330" y2="348"/>
+          <line x1="0" y1="435" x2="330" y2="435"/>
+          <line x1="82" y1="0" x2="82" y2="520"/><line x1="165" y1="0" x2="165" y2="520"/>
+          <line x1="247" y1="0" x2="247" y2="520"/>
+        </g>
+
+        <!-- Contour rings centered at (165, 88) -->
+        <g fill="none" stroke-linecap="round">
+          <ellipse cx="165" cy="88" rx="136" ry="62" stroke="#c0d8a4" stroke-width=".7" opacity=".45"/>
+          <ellipse cx="165" cy="88" rx="114" ry="52" stroke="#aacca0" stroke-width=".8" opacity=".5"/>
+          <ellipse cx="165" cy="88" rx="92"  ry="42" stroke="#90bc88" stroke-width=".9" opacity=".55"/>
+          <ellipse cx="165" cy="88" rx="70"  ry="33" stroke="#74a86e" stroke-width="1"  opacity=".6"/>
+          <ellipse cx="165" cy="88" rx="50"  ry="24" stroke="#549254" stroke-width="1.1" opacity=".65"/>
+          <ellipse cx="165" cy="88" rx="32"  ry="15" stroke="#367840" stroke-width="1.2" opacity=".7"/>
+          <ellipse cx="165" cy="88" rx="17"  ry="8"  stroke="#1e5628" stroke-width="1.3" opacity=".75"/>
+          <ellipse cx="165" cy="88" rx="7"   ry="3.5" fill="#1e3a18" stroke="none" opacity=".85"/>
+        </g>
+        <!-- Contour elev labels -->
+        <g font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#6a8860" opacity=".65">
+          <text x="8" y="90">—</text><text x="8" y="177">—</text>
+          <text x="8" y="264">—</text><text x="8" y="351">—</text>
+        </g>
+        <!-- Right elev labels -->
+        <g font-family="'JetBrains Mono',monospace" font-size="6" fill="#8aaa78" opacity=".6">
+          <text x="294" y="91">6,643'</text>
+          <text x="294" y="208">5,540'</text>
+          <text x="294" y="265">4,910'</text>
+          <text x="294" y="320">3,840'</text>
+          <text x="294" y="376">2,280'</text>
+          <text x="294" y="478">1,460'</text>
+        </g>
+
+        <!-- Elevation fill overlay -->
+        <ellipse cx="165" cy="88" rx="136" ry="62" fill="url(#topoFill)"/>
+
+        <!-- Forest tree symbols (topo-map style) — left flank -->
+        <g fill="none" stroke="#4e8a3c" opacity=".5" stroke-width="1.1">
+          <g transform="translate(48,152)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(64,170)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(42,192)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(62,212)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(46,234)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(64,255)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(44,278)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(62,298)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(46,320)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(62,340)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(46,362)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(62,382)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(46,404)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(62,424)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+        </g>
+        <!-- Forest tree symbols — right flank -->
+        <g fill="none" stroke="#4e8a3c" opacity=".5" stroke-width="1.1">
+          <g transform="translate(266,155)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(280,175)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(268,196)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(282,218)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(268,240)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(282,262)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(268,284)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(282,306)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(268,328)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(282,350)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+          <g transform="translate(268,372)"><polygon points="0,-10 8,6 -8,6"/><line x1="0" y1="6" x2="0" y2="11"/></g>
+          <g transform="translate(282,394)"><polygon points="0,-9 7,5 -7,5"/><line x1="0" y1="5" x2="0" y2="10"/></g>
+        </g>
+
+        <!-- TRAM PATH -->
+        <path id="tramPath"
+          d="M 165,88 C 172,108 180,126 185,148 C 190,170 182,186 176,206 C 170,226 176,242 180,262 C 184,282 175,296 168,316 C 161,336 160,354 157,374 C 154,394 146,408 138,428 C 130,448 122,460 116,478"
+          fill="none" stroke="#356828" stroke-width="2.2" stroke-opacity=".28"/>
+        <!-- cable dashes -->
+        <path
+          d="M 165,88 C 172,108 180,126 185,148 C 190,170 182,186 176,206 C 170,226 176,242 180,262 C 184,282 175,296 168,316 C 161,336 160,354 157,374 C 154,394 146,408 138,428 C 130,448 122,460 116,478"
+          fill="none" stroke="#4e8a3c" stroke-width="1" stroke-opacity=".55" stroke-dasharray="5,4"/>
+        <!-- support towers -->
+        <g stroke="#356828" stroke-width="1.3" opacity=".4">
+          <line x1="183" y1="138" x2="183" y2="151"/>
+          <line x1="178" y1="198" x2="178" y2="210"/>
+          <line x1="179" y1="254" x2="179" y2="266"/>
+          <line x1="165" y1="308" x2="165" y2="320"/>
+          <line x1="157" y1="364" x2="157" y2="378"/>
+          <line x1="130" y1="420" x2="130" y2="432"/>
+        </g>
+
+        <!-- active ring (updated by JS) -->
+        <circle id="activeRing" cx="165" cy="88" r="15" fill="none"
+          stroke="#4e8a3c" stroke-width="1.2" stroke-opacity=".45" stroke-dasharray="3,3">
+          <animateTransform attributeName="transform" attributeType="XML"
+            type="rotate" from="0 165 88" to="360 165 88"
+            dur="12s" repeatCount="indefinite" id="ringAnim"/>
+        </circle>
+
+        <!-- station nodes — I at top, VI at bottom -->
+        <g id="sNodes">
+          <!-- I Trailhead at top -->
+          <g class="snode" data-i="5" onclick="jumpTo(5)" style="cursor:pointer">
+            <circle id="nc0" cx="165" cy="88"  r="9" fill="var(--paper)" stroke="#224618" stroke-width="1.5"/>
+            <text id="nt0" x="165" y="91.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="8" fill="#224618" font-weight="600">I</text>
+          </g>
+          <!-- II Crossing -->
+          <g class="snode" data-i="4" onclick="jumpTo(4)" style="cursor:pointer">
+            <circle id="nc1" cx="176" cy="206" r="9" fill="var(--paper)" stroke="#224618" stroke-width="1.5"/>
+            <text id="nt1" x="176" y="209.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="8" fill="#224618" font-weight="600">II</text>
+          </g>
+          <!-- III Highland -->
+          <g class="snode" data-i="3" onclick="jumpTo(3)" style="cursor:pointer">
+            <circle id="nc2" cx="180" cy="262" r="9" fill="var(--paper)" stroke="#224618" stroke-width="1.5"/>
+            <text id="nt2" x="180" y="265.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="8" fill="#224618" font-weight="600">III</text>
+          </g>
+          <!-- IV Atelier -->
+          <g class="snode" data-i="2" onclick="jumpTo(2)" style="cursor:pointer">
+            <circle id="nc3" cx="168" cy="316" r="9" fill="var(--paper)" stroke="#224618" stroke-width="1.5"/>
+            <text id="nt3" x="168" y="319.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="8" fill="#224618" font-weight="600">IV</text>
+          </g>
+          <!-- V Cache -->
+          <g class="snode" data-i="1" onclick="jumpTo(1)" style="cursor:pointer">
+            <circle id="nc4" cx="157" cy="374" r="9" fill="var(--paper)" stroke="#224618" stroke-width="1.5"/>
+            <text id="nt4" x="157" y="377.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="8" fill="#224618" font-weight="600">V</text>
+          </g>
+          <!-- VI Summit at bottom -->
+          <g class="snode" data-i="0" onclick="jumpTo(0)" style="cursor:pointer">
+            <circle id="nc5" cx="116" cy="478" r="9" fill="var(--paper)" stroke="#224618" stroke-width="1.5"/>
+            <text id="nt5" x="116" y="481.5" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="8" fill="#224618" font-weight="600">VI</text>
+          </g>
+        </g>
+
+        <!-- Station title labels (use actual titles) -->
+        <g font-family="'JetBrains Mono',monospace" font-size="7" fill="#506048" id="sLabels">
+          <text x="178" y="85">Iowa State University</text>
+          <text x="188" y="203">ISU IT Solution Center</text>
+          <text x="192" y="259">Cambridge Investments</text>
+          <text x="180" y="313">Side Projects</text>
+          <text x="169" y="371">The Kit</text>
+          <text x="128" y="476">FIRST Tech Challenge</text>
+        </g>
+
+        <!-- Compass rose -->
+        <g transform="translate(26,490)" fill="none" stroke="#8aaa78" stroke-width="1" opacity=".55">
+          <line x1="0" y1="-13" x2="0" y2="13"/>
+          <line x1="-13" y1="0" x2="13" y2="0"/>
+          <polygon points="0,-13 3,-5 0,-8 -3,-5" fill="#4e8a3c" stroke="none"/>
+          <text x="0" y="-16" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#4e8a3c" stroke="none">N</text>
+        </g>
+
+        <!-- Scale bar -->
+        <g transform="translate(200,498)" stroke="#8aaa78" stroke-width=".9" fill="none" opacity=".55">
+          <line x1="0" y1="0" x2="66" y2="0"/>
+          <line x1="0" y1="-3" x2="0" y2="3"/><line x1="66" y1="-3" x2="66" y2="3"/>
+          <text x="33" y="-6" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6" fill="#8aaa78">0.5 mi</text>
+        </g>
+
+        <!-- TRAM CAR -->
+        <g id="tramCar" transform="translate(165,88)">
+          <!-- shadow -->
+          <ellipse cx="1" cy="18" rx="10" ry="3.5" fill="rgba(22,42,18,.18)"/>
+          <!-- suspension cable from pulley to car -->
+          <line x1="-7" y1="-15" x2="-10" y2="-8" stroke="#224618" stroke-width=".9" opacity=".7"/>
+          <line x1="7"  y1="-15" x2="10"  y2="-8" stroke="#224618" stroke-width=".9" opacity=".7"/>
+          <!-- pulley wheel -->
+          <circle cx="0" cy="-18" r="4" fill="none" stroke="#224618" stroke-width="1.3"/>
+          <circle cx="0" cy="-18" r="1.5" fill="#224618"/>
+          <!-- hanger arm -->
+          <line x1="0" y1="-14" x2="0" y2="-9" stroke="#356828" stroke-width="1.5"/>
+          <!-- gondola body — slightly tapered top -->
+          <path d="M -12,-9 Q -13,0 -12,8 L 12,8 Q 13,0 12,-9 Z"
+            fill="#f3ede0" stroke="#224618" stroke-width="1.4"/>
+          <!-- roof arc -->
+          <path d="M -12,-9 Q 0,-15 12,-9" fill="#d4e8c0" stroke="#224618" stroke-width="1.1"/>
+          <!-- windows: 3 panes -->
+          <rect x="-8.5" y="-5" width="5" height="5.5" rx="1.2" fill="rgba(53,104,40,.12)" stroke="#356828" stroke-width=".9"/>
+          <rect x="-2"   y="-5" width="4" height="5.5" rx="1.2" fill="rgba(53,104,40,.12)" stroke="#356828" stroke-width=".9"/>
+          <rect x="3.5"  y="-5" width="5" height="5.5" rx="1.2" fill="rgba(53,104,40,.12)" stroke="#356828" stroke-width=".9"/>
+          <!-- body bottom rail -->
+          <line x1="-12" y1="8" x2="12" y2="8" stroke="#224618" stroke-width=".9" opacity=".45"/>
+          <!-- door handle -->
+          <line x1="-0.5" y1="0" x2="-0.5" y2="4" stroke="#356828" stroke-width=".9" opacity=".5"/>
+        </g>
+
+        <!-- Map border + corners -->
+        <rect x="1" y="1" width="328" height="518" fill="none" stroke="#b8d89a" stroke-width="1" opacity=".4"/>
+        <g stroke="#8aaa78" stroke-width=".9" opacity=".45">
+          <polyline points="1,1 14,1 14,14"/><polyline points="316,1 329,1 329,14"/>
+          <polyline points="1,506 1,519 14,519"/><polyline points="329,506 329,519 316,519"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="map-foot">
+      <a href="mailto:cjhoy@iastate.edu" class="clink"><span class="ck">mail</span><span class="cv">cjhoy@iastate.edu</span></a>
+      <a href="tel:+13192403504" class="clink"><span class="ck">tel</span><span class="cv">319.240.3504</span></a>
+      <a href="https://linkedin.com/in/cooperhoy" class="clink"><span class="ck">in</span><span class="cv">linkedin.com/in/cooperhoy</span></a>
+      <a href="https://github.com/34coopatroopa" class="clink"><span class="ck">gh</span><span class="cv">34coopatroopa</span></a>
+    </div>
+  </div>
+
+  <!-- CONTENT COL -->
+  <div class="content-col">
+    <div class="slide-win">
+
+      <!-- SLIDE 0: VI Summit — FTC -->
+      <div class="slide active" data-i="0">
+        <div class="wm">VI</div>
+        <div class="sl-badge"><span class="sl-num">Station VI · The Summit</span><span class="sl-elev">6,643 ft</span></div>
+        <div class="sl-title">FIRST <em>Tech Challenge</em></div>
+        <div class="sl-sub">Mentor · Grundy Center, IA · 2023 — Present</div>
+
+        <div class="img-box">
+          <svg class="img-box-leaf leaf-deco" width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <path d="M24 44 C24 44 8 32 8 18 C8 10 15 4 24 4 C33 4 40 10 40 18 C40 32 24 44 24 44Z" stroke="#4e8a3c" stroke-width="1" fill="rgba(78,138,60,.06)"/>
+            <line x1="24" y1="44" x2="24" y2="12" stroke="#4e8a3c" stroke-width=".8"/>
+            <line x1="24" y1="28" x2="16" y2="20" stroke="#4e8a3c" stroke-width=".6"/>
+            <line x1="24" y1="22" x2="32" y2="16" stroke="#4e8a3c" stroke-width=".6"/>
+          </svg>
+          <span class="img-box-label">photograph · mentoring session</span>
+          <span class="img-box-hint">add your photo here</span>
+        </div>
+
+        <div class="sl-lede">"The summit is paying it forward — thirty-plus students, three robotics teams, and a season that ends in February with something that actually works."</div>
+        <div class="sl-grid">
+          <div class="sl-hl"><div class="hl-k">Students</div><div class="hl-v"><em>30+</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Teams</div><div class="hl-v">3 squads</div></div>
+          <div class="sl-hl"><div class="hl-k">Focus</div><div class="hl-v">Mech · <em>Java</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Seasons</div><div class="hl-v"><em>3</em> years</div></div>
+        </div>
+        <div class="sh"><span class="sh-text">Notable moments</span><div class="sh-line"></div>
+          <svg class="sh-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7,13 C7,13 2,9 2,5 C2,2.8 4.2,1 7,1 C9.8,1 12,2.8 12,5 C12,9 7,13 7,13Z" stroke="#4e8a3c" stroke-width=".9" fill="none"/><line x1="7" y1="13" x2="7" y2="4" stroke="#4e8a3c" stroke-width=".7"/></svg>
+        </div>
+        <ul class="sl-moments">
+          <li>Mentoring FTC Teams 13186, 14375, and 10069 across mechanical design, Java robot programming, and match strategy.</li>
+          <li>Coaching students from rough prototype to competition-ready robot — debugging, documentation, and engineering communication included.</li>
+          <li>Helping students learn to think like engineers: identify root causes, communicate clearly, and iterate fast under pressure.</li>
+        </ul>
+        <div class="sl-tags"><span class="sl-tag">30+ students</span><span class="sl-tag">Java robotics</span><span class="sl-tag">Mechanical design</span><span class="sl-tag">Match strategy</span></div>
+      </div>
+
+      <!-- SLIDE 1: V Cache — Skills -->
+      <div class="slide" data-i="1">
+        <div class="wm">V</div>
+        <div class="sl-badge"><span class="sl-num">Station V · The Cache</span><span class="sl-elev">5,540 ft</span></div>
+        <div class="sl-title">The <em>kit</em></div>
+        <div class="sl-sub">Tools used in earnest — not just listed</div>
+
+        <div class="img-box">
+          <svg class="img-box-leaf leaf-deco" width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <path d="M24 44 C24 44 8 32 8 18 C8 10 15 4 24 4 C33 4 40 10 40 18 C40 32 24 44 24 44Z" stroke="#4e8a3c" stroke-width="1" fill="rgba(78,138,60,.06)"/>
+            <line x1="24" y1="44" x2="24" y2="12" stroke="#4e8a3c" stroke-width=".8"/>
+            <line x1="24" y1="28" x2="16" y2="20" stroke="#4e8a3c" stroke-width=".6"/>
+            <line x1="24" y1="22" x2="32" y2="16" stroke="#4e8a3c" stroke-width=".6"/>
+          </svg>
+          <span class="img-box-label">photograph · workspace / tools</span>
+          <span class="img-box-hint">add your photo here</span>
+        </div>
+
+        <div class="sl-lede">"A working inventory of languages, platforms, and tools that have actually shipped something, hardened something, or fixed something in the real world."</div>
+        <div class="sl-skills">
+          <div><div class="sg-h">Programming & Development</div><div class="sg-tags"><span class="sg-tag">Python</span><span class="sg-tag">Java</span><span class="sg-tag">Spring Boot</span><span class="sg-tag">PowerShell</span><span class="sg-tag">Git</span><span class="sg-tag">LangChain</span><span class="sg-tag">OpenCV</span></div></div>
+          <div><div class="sg-h">Systems & Infrastructure</div><div class="sg-tags"><span class="sg-tag">Windows Server 2025</span><span class="sg-tag">Linux</span><span class="sg-tag">VMware</span><span class="sg-tag">Hyper-V</span><span class="sg-tag">Active Directory</span><span class="sg-tag">Group Policy</span><span class="sg-tag">Exchange</span></div></div>
+          <div><div class="sg-h">Security & Networking</div><div class="sg-tags"><span class="sg-tag">Cryptography</span><span class="sg-tag">Server Hardening</span><span class="sg-tag">Network Config</span><span class="sg-tag">Auth Systems</span><span class="sg-tag">Pen Testing Fundamentals</span></div></div>
+          <div><div class="sg-h">Embedded & Hardware</div><div class="sg-tags"><span class="sg-tag">Raspberry Pi</span><span class="sg-tag">RISC-V Architecture</span><span class="sg-tag">Assembly</span><span class="sg-tag">Environmental Sensors</span></div></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: IV Atelier — Projects -->
+      <div class="slide" data-i="2">
+        <div class="wm">IV</div>
+        <div class="sl-badge"><span class="sl-num">Station IV · The Atelier</span><span class="sl-elev">4,910 ft</span></div>
+        <div class="sl-title">Three <em>side builds</em></div>
+        <div class="sl-sub">Personal projects · 2025</div>
+
+        <div class="img-box">
+          <svg class="img-box-leaf leaf-deco" width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <path d="M24 44 C24 44 8 32 8 18 C8 10 15 4 24 4 C33 4 40 10 40 18 C40 32 24 44 24 44Z" stroke="#4e8a3c" stroke-width="1" fill="rgba(78,138,60,.06)"/>
+            <line x1="24" y1="44" x2="24" y2="12" stroke="#4e8a3c" stroke-width=".8"/>
+            <line x1="24" y1="28" x2="16" y2="20" stroke="#4e8a3c" stroke-width=".6"/>
+            <line x1="24" y1="22" x2="32" y2="16" stroke="#4e8a3c" stroke-width=".6"/>
+          </svg>
+          <span class="img-box-label">photograph · project builds</span>
+          <span class="img-box-hint">add your photo here</span>
+        </div>
+
+        <div class="sl-lede">"A workshop hewn into the rock — where the small, weird, useful things get built around real problems."</div>
+        <div class="sl-projects">
+          <div class="sl-proj">
+            <div class="proj-hd"><span class="proj-t">Nerd Market</span><span class="proj-st">Full-stack · 2025</span></div>
+            <div class="proj-d">A stock-ticker-style price tracker for Pokémon, Magic: The Gathering, and other TCG markets. Spring Boot backend, MariaDB, OpenCV card recognition, and TCGPlayer/Scryfall APIs — treating cards like market assets so collectors can track value in one place.</div>
+            <div class="proj-stack"><span class="ptag">Java</span><span class="ptag">Spring Boot</span><span class="ptag">MariaDB</span><span class="ptag">OpenCV</span><span class="ptag">TCGPlayer API</span><span class="ptag">Scryfall API</span></div>
+          </div>
+          <div class="sl-proj">
+            <div class="proj-hd"><span class="proj-t">Outpost</span><span class="proj-st">Hardware · 2025</span></div>
+            <div class="proj-d">A portable offline survival computer on a Raspberry Pi 5 — preloaded with Wikipedia, survival manuals, maps, and repair guides. Integrated environmental sensors and a local Ollama Phi-3 model. Zero internet dependency.</div>
+            <div class="proj-stack"><span class="ptag">Raspberry Pi 5</span><span class="ptag">Ollama</span><span class="ptag">Phi-3</span><span class="ptag">Linux</span><span class="ptag">Sensors</span><span class="ptag">Offline-first</span></div>
+          </div>
+          <div class="sl-proj">
+            <div class="proj-hd"><span class="proj-t">HelpLlama</span><span class="proj-st">ML · 2025</span></div>
+            <div class="proj-d">A Python helpdesk chatbot that parses internal DOCX, PDF, and TXT documentation and ticket history to answer IT support questions in context. Built around a real pain point: useful information exists everywhere, but nobody can find it fast enough.</div>
+            <div class="proj-stack"><span class="ptag">Python</span><span class="ptag">LangChain</span><span class="ptag">RAG</span><span class="ptag">Document Parsing</span><span class="ptag">Local LLM</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: III Highland — Cambridge -->
+      <div class="slide" data-i="3">
+        <div class="wm">III</div>
+        <div class="sl-badge"><span class="sl-num">Station III · The Highland</span><span class="sl-elev">3,840 ft</span></div>
+        <div class="sl-title">Cambridge <em>Investments</em></div>
+        <div class="sl-sub">IT Infrastructure Engineer · HCI Team · 2024 — 2025</div>
+
+        <div class="img-box">
+          <svg class="img-box-leaf leaf-deco" width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <path d="M24 44 C24 44 8 32 8 18 C8 10 15 4 24 4 C33 4 40 10 40 18 C40 32 24 44 24 44Z" stroke="#4e8a3c" stroke-width="1" fill="rgba(78,138,60,.06)"/>
+            <line x1="24" y1="44" x2="24" y2="12" stroke="#4e8a3c" stroke-width=".8"/>
+            <line x1="24" y1="28" x2="16" y2="20" stroke="#4e8a3c" stroke-width=".6"/>
+            <line x1="24" y1="22" x2="32" y2="16" stroke="#4e8a3c" stroke-width=".6"/>
+          </svg>
+          <span class="img-box-label">photograph · Cambridge Investments</span>
+          <span class="img-box-hint">add your photo here</span>
+        </div>
+
+        <div class="sl-lede">"A year above the treeline. Enterprise infrastructure that quietly keeps everything alive — until something breaks and everyone suddenly remembers it exists."</div>
+        <div class="sl-grid">
+          <div class="sl-hl"><div class="hl-k">Stint</div><div class="hl-v"><em>2024–25</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Stack</div><div class="hl-v">Win <em>2025</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Exchange</div><div class="hl-v"><em>99.9%</em> up</div></div>
+          <div class="sl-hl"><div class="hl-k">Location</div><div class="hl-v">Fairfield, <em>IA</em></div></div>
+        </div>
+        <div class="sh"><span class="sh-text">Notable moments</span><div class="sh-line"></div>
+          <svg class="sh-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7,13 C7,13 2,9 2,5 C2,2.8 4.2,1 7,1 C9.8,1 12,2.8 12,5 C12,9 7,13 7,13Z" stroke="#4e8a3c" stroke-width=".9" fill="none"/><line x1="7" y1="13" x2="7" y2="4" stroke="#4e8a3c" stroke-width=".7"/></svg>
+        </div>
+        <ul class="sl-moments">
+          <li>Configured and deployed Windows Server 2025 inside VMware to support Active Directory and file-sharing services.</li>
+          <li>Built an isolated AD sandbox environment for safely testing new products and configurations before touching production.</li>
+          <li>Developed Group Policy hardening baselines that set a new endpoint security standard across the environment.</li>
+          <li>Managed Exchange settings, monitored infrastructure health, and assisted with outage response and root cause analysis.</li>
+          <li>Participated in post-incident reviews to identify long-term fixes rather than recurring temporary patches.</li>
+        </ul>
+        <div class="sl-tags"><span class="sl-tag">Win Server 2025</span><span class="sl-tag">VMware</span><span class="sl-tag">Active Directory</span><span class="sl-tag">Group Policy</span><span class="sl-tag">Exchange</span></div>
+      </div>
+
+      <!-- SLIDE 4: II Crossing — IT Support -->
+      <div class="slide" data-i="4">
+        <div class="wm">II</div>
+        <div class="sl-badge"><span class="sl-num">Station II · The Crossing</span><span class="sl-elev">2,280 ft</span></div>
+        <div class="sl-title">ISU <em>IT Solution Center</em></div>
+        <div class="sl-sub">Team Lead · Senior Technical Support · 2023 — Present</div>
+
+        <div class="img-box">
+          <svg class="img-box-leaf leaf-deco" width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <path d="M24 44 C24 44 8 32 8 18 C8 10 15 4 24 4 C33 4 40 10 40 18 C40 32 24 44 24 44Z" stroke="#4e8a3c" stroke-width="1" fill="rgba(78,138,60,.06)"/>
+            <line x1="24" y1="44" x2="24" y2="12" stroke="#4e8a3c" stroke-width=".8"/>
+            <line x1="24" y1="28" x2="16" y2="20" stroke="#4e8a3c" stroke-width=".6"/>
+            <line x1="24" y1="22" x2="32" y2="16" stroke="#4e8a3c" stroke-width=".6"/>
+          </svg>
+          <span class="img-box-label">photograph · ISU IT Solution Center</span>
+          <span class="img-box-hint">add your photo here</span>
+        </div>
+
+        <div class="sl-lede">"Frontline IT for a campus of tens of thousands. The first crossing — where a student learns to lead a team and own a process."</div>
+        <div class="sl-grid">
+          <div class="sl-hl"><div class="hl-k">Role</div><div class="hl-v"><em>Team Lead</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Since</div><div class="hl-v">2023 — <em>now</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Manages</div><div class="hl-v"><em>10–15</em> techs</div></div>
+          <div class="sl-hl"><div class="hl-k">Onboard</div><div class="hl-v">6 wk → <em>2 wk</em></div></div>
+        </div>
+        <div class="sh"><span class="sh-text">Notable moments</span><div class="sh-line"></div>
+          <svg class="sh-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7,13 C7,13 2,9 2,5 C2,2.8 4.2,1 7,1 C9.8,1 12,2.8 12,5 C12,9 7,13 7,13Z" stroke="#4e8a3c" stroke-width=".9" fill="none"/><line x1="7" y1="13" x2="7" y2="4" stroke="#4e8a3c" stroke-width=".7"/></svg>
+        </div>
+        <ul class="sl-moments">
+          <li>Rebuilt new-hire onboarding from scratch, cutting ramp time from six weeks to two.</li>
+          <li>Standardized ticket templates for the highest-volume issue categories across the team.</li>
+          <li>Authored knowledge-base articles that measurably improved first-call resolution rates.</li>
+          <li>Managed daily operations, scheduling, and technical escalations for a rotating team of student technicians.</li>
+        </ul>
+        <div class="sl-tags"><span class="sl-tag">Team Lead</span><span class="sl-tag">10–15 Techs</span><span class="sl-tag">Onboarding 6→2wk</span><span class="sl-tag">Knowledge Base</span></div>
+      </div>
+
+      <!-- SLIDE 5: I Trailhead — Iowa State -->
+      <div class="slide" data-i="5">
+        <div class="wm">I</div>
+        <div class="sl-badge"><span class="sl-num">Station I · The Trailhead</span><span class="sl-elev">1,460 ft</span></div>
+        <div class="sl-title">Iowa State <em>University</em></div>
+        <div class="sl-sub">B.S. Cyber Security Engineering · Class of '27</div>
+
+        <div class="img-box">
+          <svg class="img-box-leaf leaf-deco" width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <path d="M24 44 C24 44 8 32 8 18 C8 10 15 4 24 4 C33 4 40 10 40 18 C40 32 24 44 24 44Z" stroke="#4e8a3c" stroke-width="1" fill="rgba(78,138,60,.06)"/>
+            <line x1="24" y1="44" x2="24" y2="12" stroke="#4e8a3c" stroke-width=".8"/>
+            <line x1="24" y1="28" x2="16" y2="20" stroke="#4e8a3c" stroke-width=".6"/>
+            <line x1="24" y1="22" x2="32" y2="16" stroke="#4e8a3c" stroke-width=".6"/>
+          </svg>
+          <span class="img-box-label">photograph · Iowa State University</span>
+          <span class="img-box-hint">add your photo here</span>
+        </div>
+
+        <div class="sl-lede">"Where the path begins. Systems, networks, cryptography, and the math that makes secure infrastructure behave."</div>
+        <div class="sl-grid">
+          <div class="sl-hl"><div class="hl-k">Program</div><div class="hl-v"><em>B.S.</em> CSE</div></div>
+          <div class="sl-hl"><div class="hl-k">Since</div><div class="hl-v">Fall <em>2023</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Graduates</div><div class="hl-v">Spring <em>2027</em></div></div>
+          <div class="sl-hl"><div class="hl-k">Campus</div><div class="hl-v"><em>Ames</em>, Iowa</div></div>
+        </div>
+        <div class="sh"><span class="sh-text">Notable moments</span><div class="sh-line"></div>
+          <svg class="sh-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7,13 C7,13 2,9 2,5 C2,2.8 4.2,1 7,1 C9.8,1 12,2.8 12,5 C12,9 7,13 7,13Z" stroke="#4e8a3c" stroke-width=".9" fill="none"/><line x1="7" y1="13" x2="7" y2="4" stroke="#4e8a3c" stroke-width=".7"/></svg>
+        </div>
+        <ul class="sl-moments">
+          <li>Built a hardware-scheduled, five-stage pipelined RISC-V processor at the assembly level.</li>
+          <li>Deployed enterprise LDAP, DNS, web, mail, and security servers in hardening labs.</li>
+          <li>Completed penetration testing environments and networked systems coursework.</li>
+          <li>Coursework spanning cryptography, computer architecture, data structures, embedded systems, networking protocols, and software project management.</li>
+        </ul>
+        <div class="sl-tags"><span class="sl-tag">Cryptography</span><span class="sl-tag">RISC-V</span><span class="sl-tag">Pen Testing</span><span class="sl-tag">Networking</span><span class="sl-tag">Embedded Systems</span></div>
+      </div>
+
+    </div><!-- slide-win -->
+
+    <!-- content nav -->
+    <div class="content-nav">
+      <button class="nav-arr" id="navUp" onclick="go(-1)">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+          <polyline points="1,6 4.5,2 8,6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Higher
+      </button>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div class="nav-dots" id="navDots"></div>
+        <div class="nav-station-name" id="navName"></div>
+      </div>
+      <button class="nav-arr" id="navDown" onclick="go(1)">
+        Lower
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+          <polyline points="1,3 4.5,7 8,3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div><!-- content-col -->
+
+</div><!-- main -->
+</div><!-- screens -->
+
+<script>
+const TOTAL = 6;
+let cur = 0;
+let animId = null;
+
+/* Tram node positions matching SVG nodes */
+const NODE_POS = [
+  {x:116, y:478},  // slide 0 = VI Summit  → bottom of map
+  {x:157, y:374},  // slide 1 = V Cache
+  {x:168, y:316},  // slide 2 = IV Atelier
+  {x:180, y:262},  // slide 3 = III Highland
+  {x:176, y:206},  // slide 4 = II Crossing
+  {x:165, y:88},   // slide 5 = I Trailhead → top of map
+];
+
+const STATION_NAMES = [
+  'FIRST Tech Challenge',
+  'The Kit',
+  'Side Projects',
+  'Cambridge Investments',
+  'ISU IT Solution Center',
+  'Iowa State University',
+];
+
+const tramCar   = document.getElementById('tramCar');
+const activeRing = document.getElementById('activeRing');
+const slides    = document.querySelectorAll('.slide');
+const dotsEl    = document.getElementById('navDots');
+const nameEl    = document.getElementById('navName');
+
+/* Current animated tram position */
+let tX = NODE_POS[0].x, tY = NODE_POS[0].y;
+let targetX = tX, targetY = tY;
+
+function animateTram() {
+  if (animId) cancelAnimationFrame(animId);
+  function step() {
+    const dx = targetX - tX, dy = targetY - tY;
+    if (Math.abs(dx) < 0.15 && Math.abs(dy) < 0.15) {
+      tX = targetX; tY = targetY;
+      placeTram(); return;
+    }
+    tX += dx * 0.1; tY += dy * 0.1;
+    placeTram();
+    animId = requestAnimationFrame(step);
+  }
+  animId = requestAnimationFrame(step);
+}
+
+function placeTram() {
+  tramCar.setAttribute('transform', `translate(${tX.toFixed(2)},${tY.toFixed(2)})`);
+}
+
+function moveRing(idx) {
+  const p = NODE_POS[idx];
+  const anim = document.getElementById('ringAnim');
+  activeRing.setAttribute('cx', p.x);
+  activeRing.setAttribute('cy', p.y);
+  /* update rotation center */
+  anim.setAttribute('from', `0 ${p.x} ${p.y}`);
+  anim.setAttribute('to',   `360 ${p.x} ${p.y}`);
+}
+
+/* Build dots */
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('button');
+  d.className = 'ndot';
+  d.onclick = () => jumpTo(i);
+  dotsEl.appendChild(d);
+}
+
+function updateUI() {
+  /* dots */
+  document.querySelectorAll('.ndot').forEach((d,i) => d.classList.toggle('on', i === cur));
+  /* station name */
+  nameEl.textContent = STATION_NAMES[cur];
+  /* nav buttons */
+  document.getElementById('navUp').disabled   = cur === 0;
+  document.getElementById('navDown').disabled = cur === TOTAL - 1;
+  /* node fill — nc0=top(I), nc5=bottom(VI); slide 0=VI so svgIdx = TOTAL-1-i */
+  for (let i = 0; i < TOTAL; i++) {
+    const svgI = TOTAL - 1 - i;
+    const nc = document.getElementById('nc' + svgI);
+    const nt = document.getElementById('nt' + svgI);
+    if (i === cur) {
+      nc.setAttribute('fill', '#3a6828');
+      nc.setAttribute('stroke', '#182a12');
+      nt.setAttribute('fill', '#f3ede0');
+    } else {
+      nc.setAttribute('fill', 'var(--paper)');
+      nc.setAttribute('stroke', '#224618');
+      nt.setAttribute('fill', '#224618');
+    }
+  }
+  /* tram target */
+  targetX = NODE_POS[cur].x;
+  targetY = NODE_POS[cur].y;
+  animateTram();
+  moveRing(cur);
+}
+
+function goToSlide(next, direction) {
+  /* Exit current */
+  slides[cur].classList.add('leaving');
+  const exiting = slides[cur];
+  setTimeout(() => exiting.classList.remove('leaving', 'active'), 360);
+
+  cur = next;
+  slides[cur].classList.add('active');
+  updateUI();
+}
+
+function go(dir) {
+  const next = cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  goToSlide(next, dir);
+}
+
+function jumpTo(i) {
+  if (i === cur) return;
+  goToSlide(i, i > cur ? 1 : -1);
+}
+
+function enter() {
+  document.getElementById('landing').classList.add('out');
+  document.getElementById('main').classList.add('in');
+  updateUI();
+}
+function leave() {
+  document.getElementById('main').classList.remove('in');
+  document.getElementById('landing').classList.remove('out');
+}
+
+/* Keyboard */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); }
+  if (e.key === 'Escape') leave();
+});
+
+/* Init */
+placeTram();
+updateUI();
+</script>
+</body>
+</html>

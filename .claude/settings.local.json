@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(npm install *)",
+      "PowerShell(Get-Location; Get-ChildItem node_modules | Where-Object Name -in 'three','@react-three' | Select-Object Name)",
+      "PowerShell(npm install *)",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/public/photos/ my-portfolio/package.json my-portfolio/package-lock.json)",
+      "Bash(git -C \"D:/Cooperfolio\" commit -m \"chore: add photos, remove three.js files and deps\")",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/index.css)",
+      "Bash(git -C \"D:/Cooperfolio\" commit -m \"style: replace index.css with forest-tram design tokens and layout\")",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/data/stations.js)",
+      "Bash(git -C \"D:/Cooperfolio\" commit -m \"data: rewrite stations.js with 7 forest-tram entries\")",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/components/LandingScreen.jsx)",
+      "Bash(git -C \"D:/Cooperfolio\" commit -m \"feat: add LandingScreen component\")",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/illustrations.jsx)",
+      "Bash(git -C \"D:/Cooperfolio\" commit -m \"feat: add per-station animated SVG illustrations\")",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/components/Slide.jsx)",
+      "Bash(git -C \"D:/Cooperfolio\" commit -m \"feat: add generic Slide component\")",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/components/MapColumn.jsx)",
+      "Bash(git -C D:/Cooperfolio commit -m ' *)",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/components/ContentColumn.jsx)",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/components/MainLayout.jsx my-portfolio/src/App.jsx)",
+      "Bash(npm run *)",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/illustrations.jsx my-portfolio/src/components/MapColumn.jsx my-portfolio/src/components/ContentColumn.jsx)",
+      "Bash(Start-Sleep -Seconds 4)",
+      "Bash(Get-Content \"C:\\\\Users\\\\34coo\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\D--Cooperfolio\\\\d364dad1-7c9d-4dac-9456-aa3e665c0f5d\\\\tasks\\\\b4uf70h5a.output\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -First 30)",
+      "PowerShell(Start-Process -NoNewWindow -FilePath \"cmd\" -ArgumentList \"/c cd D:\\\\Cooperfolio\\\\my-portfolio && npm run dev -- --port 5175\" ; Start-Sleep -Seconds 5 ; Invoke-WebRequest -Uri \"http://localhost:5175\" -UseBasicParsing -TimeoutSec 5 | Select-Object -ExpandProperty StatusCode)",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/App.jsx my-portfolio/src/components/MainLayout.jsx my-portfolio/src/components/ContentColumn.jsx)",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/public/photos/ my-portfolio/src/data/stations.js my-portfolio/src/illustrations.jsx my-portfolio/src/index.css)",
+      "Bash(git -C \"D:/Cooperfolio\" add my-portfolio/src/index.css my-portfolio/src/illustrations.jsx)",
+      "Bash(vercel *)",
+      "Bash(git *)",
+      "Bash(echo \"EXIT: $?\")",
+      "PowerShell(git push *)"
+    ]
+  }
+}

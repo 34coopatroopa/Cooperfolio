@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cooper Hoy — Forest Tram</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400&family=JetBrains+Mono:wght@300;400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream:    #f3ede1;
+  --paper:    #ede6d6;
+  --forest1:  #1e3318;  /* darkest */
+  --forest2:  #2e5226;  /* deep */
+  --forest3:  #4a7a40;  /* mid */
+  --forest4:  #7aad68;  /* light */
+  --forest5:  #b8d9a8;  /* pale */
+  --fog:      #d4e4cc;
+  --ink:      #1c2e18;
+  --ink-mid:  #506048;
+  --ink-dim:  #8a9e80;
+  --amber:    #c49030;
+  --serif:    'Cormorant Garamond', Georgia, serif;
+  --sans:     'Inter', system-ui, sans-serif;
+  --mono:     'JetBrains Mono', monospace;
+}
+
+html, body { height: 100%; font-family: var(--sans); background: var(--cream); color: var(--ink); overflow: hidden; }
+
+/* ─── SCREENS ─── */
+.screens { width: 100%; height: 100%; position: relative; overflow: hidden; }
+
+/* SCREEN 1 — LANDING */
+.landing {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  transition: transform .9s cubic-bezier(.77,0,.18,1), opacity .7s;
+  z-index: 2;
+}
+.landing.hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+
+/* photo area */
+.hero-photo {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--forest2);
+  display: flex; align-items: flex-end;
+}
+/* Placeholder — replace with <img> */
+.photo-placeholder {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    160deg,
+    #1e3318 0%,
+    #2d5224 30%,
+    #3d6e32 55%,
+    #4a7a40 75%,
+    #6a9a5a 100%
+  );
+  /* subtle texture using svg pattern */
+}
+.photo-placeholder::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(ellipse at 30% 60%, rgba(120,180,80,.18) 0%, transparent 60%),
+                    radial-gradient(ellipse at 70% 20%, rgba(30,50,20,.4) 0%, transparent 50%);
+}
+/* Forest silhouette overlay */
+.photo-placeholder::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
+  background: linear-gradient(to top, rgba(30,51,24,.8) 0%, transparent 100%);
+}
+.photo-trees {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 55%;
+  pointer-events: none;
+}
+
+/* Name block over photo */
+.hero-name {
+  position: relative; z-index: 2;
+  padding: 0 48px 42px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.hero-name h1 {
+  font-family: var(--serif); font-size: 58px; font-weight: 300; line-height: 1;
+  color: #f3ede1; letter-spacing: .01em;
+}
+.hero-name h1 em { font-style: italic; color: var(--forest5); }
+.hero-name .tagline {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .32em;
+  color: var(--forest5); text-transform: uppercase; opacity: .8;
+}
+
+/* Bottom strip */
+.landing-bottom {
+  background: var(--cream); border-top: 1px solid var(--forest5);
+  padding: 18px 48px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+.landing-meta {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .2em;
+  color: var(--ink-dim); text-transform: uppercase;
+}
+.enter-btn {
+  background: none; border: 1px solid var(--forest3); cursor: pointer;
+  color: var(--forest2); font-family: var(--mono); font-size: 10px;
+  letter-spacing: .25em; text-transform: uppercase;
+  padding: 10px 24px;
+  display: flex; align-items: center; gap: 10px;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.enter-btn:hover { background: var(--forest2); color: var(--cream); border-color: var(--forest2); }
+.enter-btn svg { transition: transform .25s; }
+.enter-btn:hover svg { transform: translateX(3px); }
+
+/* SCREEN 2 — TRAM MAP + CONTENT */
+.main {
+  position: absolute; inset: 0;
+  display: flex;
+  transform: translateY(100%);
+  transition: transform .9s cubic-bezier(.77,0,.18,1);
+  z-index: 1;
+  background: var(--cream);
+}
+.main.visible { transform: translateY(0); z-index: 3; }
+
+/* ── MAP COLUMN ── */
+.map-col {
+  width: 280px; flex-shrink: 0;
+  background: var(--paper);
+  border-right: 1px solid var(--forest5);
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.map-header {
+  padding: 22px 24px 14px;
+  border-bottom: 1px solid var(--forest5);
+  flex-shrink: 0;
+}
+.map-header .back-btn {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--mono); font-size: 9px; letter-spacing: .22em;
+  color: var(--ink-dim); text-transform: uppercase; padding: 0;
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 12px; transition: color .2s;
+}
+.map-header .back-btn:hover { color: var(--forest2); }
+.map-header h2 {
+  font-family: var(--serif); font-size: 18px; font-weight: 300;
+  color: var(--ink); letter-spacing: .02em;
+}
+.map-header .map-sub {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: .22em;
+  color: var(--ink-dim); text-transform: uppercase; margin-top: 4px;
+}
+
+/* The mountain tram map */
+.tram-map { flex: 1; position: relative; overflow: hidden; padding: 10px 0; }
+.tram-map svg { width: 100%; height: 100%; }
+
+/* Contact strip */
+.map-contact {
+  border-top: 1px solid var(--forest5); padding: 16px 24px;
+  display: flex; flex-direction: column; gap: 7px;
+  flex-shrink: 0;
+}
+.contact-row {
+  display: flex; gap: 10px; align-items: baseline;
+  font-size: 11px; text-decoration: none; color: inherit;
+  transition: color .2s;
+}
+.contact-row:hover { color: var(--forest2); }
+.ck { font-family: var(--mono); font-size: 8px; letter-spacing: .22em; color: var(--ink-dim); text-transform: uppercase; width: 26px; flex-shrink: 0; }
+.cv { font-size: 11px; color: var(--ink-mid); }
+
+/* ── CONTENT COLUMN ── */
+.content-col {
+  flex: 1; position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+/* Slide window */
+.slide-window { flex: 1; position: relative; overflow: hidden; }
+
+.station-slide {
+  position: absolute; inset: 0;
+  padding: 48px 52px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(40px);
+  transition: opacity .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1);
+  overflow-y: auto;
+}
+.station-slide.active {
+  opacity: 1; pointer-events: auto; transform: translateY(0);
+}
+.station-slide.exit-up {
+  opacity: 0; transform: translateY(-40px);
+}
+
+.sl-num {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .3em;
+  color: var(--forest3); text-transform: uppercase; margin-bottom: 6px;
+}
+.sl-elev {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .22em;
+  color: var(--ink-dim); float: right; margin-top: 2px;
+}
+.sl-title {
+  font-family: var(--serif); font-size: 36px; font-weight: 300;
+  color: var(--ink); line-height: 1.15; margin-bottom: 4px;
+}
+.sl-title em { font-style: italic; color: var(--forest2); }
+.sl-sub {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .16em;
+  color: var(--ink-dim); text-transform: uppercase; margin-bottom: 26px;
+  padding-bottom: 20px; border-bottom: 1px solid var(--forest5);
+}
+.sl-lede {
+  font-size: 15px; font-weight: 300; color: var(--ink-mid);
+  line-height: 1.8; margin-bottom: 24px; font-family: var(--serif); font-size: 17px;
+}
+.sl-moments { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.sl-moments li {
+  font-size: 13px; color: var(--ink-mid); line-height: 1.65;
+  padding-left: 16px; position: relative;
+}
+.sl-moments li::before {
+  content: '—'; position: absolute; left: 0; color: var(--forest4);
+}
+.sl-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.sl-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .14em;
+  padding: 4px 10px; border: 1px solid var(--forest5);
+  color: var(--ink-dim); text-transform: uppercase;
+  background: rgba(122,173,104,.07);
+}
+
+/* Content nav */
+.content-nav {
+  border-top: 1px solid var(--forest5); padding: 16px 52px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+.nav-arrow {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .22em;
+  color: var(--ink-dim); text-transform: uppercase; padding: 8px 0;
+  display: flex; align-items: center; gap: 8px;
+  transition: color .2s;
+}
+.nav-arrow:hover { color: var(--forest2); }
+.nav-arrow:disabled { opacity: .2; cursor: default; }
+.progress-dots { display: flex; gap: 8px; }
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--forest5); cursor: pointer;
+  transition: background .25s, transform .25s;
+}
+.dot.active { background: var(--forest2); transform: scale(1.3); }
+</style>
+</head>
+<body>
+<div class="screens">
+
+  <!-- SCREEN 1: LANDING -->
+  <div class="landing" id="landing">
+    <div class="hero-photo">
+      <div class="photo-placeholder"></div>
+
+      <!-- SVG tree silhouettes -->
+      <svg class="photo-trees" viewBox="0 0 900 280" preserveAspectRatio="xMidYMax meet" fill="none">
+        <!-- far trees (lighter) -->
+        <g opacity=".35" fill="#1a3015">
+          <polygon points="60,280 75,220 90,280"/>
+          <polygon points="68,280 80,200 92,280"/>
+          <polygon points="140,280 158,215 176,280"/>
+          <polygon points="230,280 245,230 260,280"/>
+          <polygon points="310,280 328,210 346,280"/>
+          <polygon points="400,280 415,225 430,280"/>
+          <polygon points="480,280 498,208 516,280"/>
+          <polygon points="560,280 575,218 590,280"/>
+          <polygon points="630,280 648,212 666,280"/>
+          <polygon points="710,280 725,222 740,280"/>
+          <polygon points="790,280 808,210 826,280"/>
+          <polygon points="860,280 875,225 890,280"/>
+        </g>
+        <!-- near trees (darker) -->
+        <g fill="#1a3015">
+          <polygon points="0,280 22,190 44,280"/>
+          <polygon points="10,280 28,170 46,280"/>
+          <polygon points="100,280 120,175 140,280"/>
+          <polygon points="108,280 124,195 140,280"/>
+          <polygon points="190,280 212,178 234,280"/>
+          <polygon points="270,280 292,172 314,280"/>
+          <polygon points="350,280 372,182 394,280"/>
+          <polygon points="430,280 450,168 470,280"/>
+          <polygon points="510,280 532,175 554,280"/>
+          <polygon points="590,280 610,170 630,280"/>
+          <polygon points="665,280 688,178 710,280"/>
+          <polygon points="745,280 768,172 790,280"/>
+          <polygon points="820,280 842,180 864,280"/>
+          <polygon points="872,280 892,174 900,240 900,280"/>
+        </g>
+      </svg>
+
+      <div class="hero-name">
+        <h1>Cooper <em>Hoy</em></h1>
+        <div class="tagline">Cyber Security Engineering · Ames, Iowa</div>
+      </div>
+    </div>
+    <div class="landing-bottom">
+      <div class="landing-meta">An illustrated curriculum vitæ</div>
+      <button class="enter-btn" onclick="enter()">
+        Enter the ascent
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <polyline points="2,4 6,8 10,4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: TRAM + CONTENT -->
+  <div class="main" id="main">
+
+    <!-- MAP COLUMN -->
+    <div class="map-col">
+      <div class="map-header">
+        <button class="back-btn" onclick="leave()">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+            <polyline points="5,1 2,4 5,7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          Back
+        </button>
+        <h2>The Ascent</h2>
+        <div class="map-sub">6 stations · 1,460 — 6,643 ft</div>
+      </div>
+
+      <!-- TRAM MAP SVG -->
+      <div class="tram-map">
+        <svg id="tramSvg" viewBox="0 0 280 480" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <filter id="treeShadow">
+              <feGaussianBlur stdDeviation="1.5" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <radialGradient id="peakGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#7aad68" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#7aad68" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+
+          <!-- TOPOGRAPHIC RINGS (top-down mountain) -->
+          <!-- Outermost contour -->
+          <ellipse cx="140" cy="88" rx="118" ry="52" fill="none" stroke="#b8d9a8" stroke-width="0.7" opacity=".5"/>
+          <ellipse cx="140" cy="88" rx="95"  ry="42" fill="none" stroke="#9ac888" stroke-width="0.7" opacity=".5"/>
+          <ellipse cx="140" cy="88" rx="72"  ry="32" fill="none" stroke="#7aad68" stroke-width="0.8" opacity=".6"/>
+          <ellipse cx="140" cy="88" rx="50"  ry="22" fill="none" stroke="#5a9048" stroke-width="0.9" opacity=".6"/>
+          <ellipse cx="140" cy="88" rx="30"  ry="13" fill="none" stroke="#3d7032" stroke-width="1.0" opacity=".7"/>
+          <ellipse cx="140" cy="88" rx="14"  ry="6"  fill="none" stroke="#2d5828" stroke-width="1.1" opacity=".8"/>
+          <!-- Summit filled -->
+          <ellipse cx="140" cy="88" rx="6" ry="3" fill="#2d5828" opacity=".9"/>
+
+          <!-- Peak glow -->
+          <ellipse cx="140" cy="88" rx="30" ry="20" fill="url(#peakGlow)"/>
+
+          <!-- TRAM CABLE PATH — winding down from summit to base -->
+          <!-- This is the full path the tram rides -->
+          <path id="tramPath"
+            d="M 140 88
+               C 148 105, 162 115, 168 132
+               C 174 150, 165 162, 160 178
+               C 155 196, 162 210, 166 228
+               C 170 246, 162 260, 155 278
+               C 148 296, 150 310, 148 328
+               C 146 346, 138 358, 132 374
+               C 126 390, 122 405, 118 424"
+            fill="none" stroke="#2e5226" stroke-width="2.5" stroke-linecap="round" stroke-opacity=".35"/>
+
+          <!-- Cable (thinner, lighter) -->
+          <path
+            d="M 140 88
+               C 148 105, 162 115, 168 132
+               C 174 150, 165 162, 160 178
+               C 155 196, 162 210, 166 228
+               C 170 246, 162 260, 155 278
+               C 148 296, 150 310, 148 328
+               C 146 346, 138 358, 132 374
+               C 126 390, 122 405, 118 424"
+            fill="none" stroke="#4a7a40" stroke-width="1" stroke-linecap="round" stroke-opacity=".6"
+            stroke-dasharray="4 3"/>
+
+          <!-- Forest patches (top-down tree clusters) -->
+          <g fill="#3d6b35" opacity=".35">
+            <circle cx="90"  cy="115" r="12"/>
+            <circle cx="78"  cy="128" r="9"/>
+            <circle cx="185" cy="120" r="11"/>
+            <circle cx="196" cy="135" r="8"/>
+            <circle cx="75"  cy="160" r="14"/>
+            <circle cx="60"  cy="148" r="10"/>
+            <circle cx="192" cy="165" r="13"/>
+            <circle cx="80"  cy="195" r="11"/>
+            <circle cx="200" cy="200" r="10"/>
+            <circle cx="68"  cy="225" r="12"/>
+            <circle cx="195" cy="235" r="11"/>
+            <circle cx="75"  cy="258" r="13"/>
+            <circle cx="198" cy="262" r="10"/>
+            <circle cx="70"  cy="295" r="12"/>
+            <circle cx="200" cy="295" r="9"/>
+            <circle cx="80"  cy="330" r="10"/>
+            <circle cx="195" cy="330" r="11"/>
+            <circle cx="72"  cy="360" r="13"/>
+            <circle cx="192" cy="365" r="10"/>
+            <circle cx="82"  cy="395" r="11"/>
+            <circle cx="185" cy="398" r="9"/>
+          </g>
+
+          <!-- STATION NODES — positioned along the path -->
+          <!-- I: 1460ft — bottom -->
+          <circle id="node5" cx="118" cy="424" r="7" fill="#f3ede1" stroke="#2e5226" stroke-width="1.5" class="sta-node" onclick="jumpTo(5)" style="cursor:pointer"/>
+          <!-- II: 2280ft -->
+          <circle id="node4" cx="132" cy="374" r="7" fill="#f3ede1" stroke="#2e5226" stroke-width="1.5" class="sta-node" onclick="jumpTo(4)" style="cursor:pointer"/>
+          <!-- III: 3840ft -->
+          <circle id="node3" cx="148" cy="328" r="7" fill="#f3ede1" stroke="#2e5226" stroke-width="1.5" class="sta-node" onclick="jumpTo(3)" style="cursor:pointer"/>
+          <!-- IV: 4910ft -->
+          <circle id="node2" cx="166" cy="228" r="7" fill="#f3ede1" stroke="#2e5226" stroke-width="1.5" class="sta-node" onclick="jumpTo(2)" style="cursor:pointer"/>
+          <!-- V: 5540ft -->
+          <circle id="node1" cx="160" cy="178" r="7" fill="#f3ede1" stroke="#2e5226" stroke-width="1.5" class="sta-node" onclick="jumpTo(1)" style="cursor:pointer"/>
+          <!-- VI: 6643ft — summit -->
+          <circle id="node0" cx="140" cy="88"  r="7" fill="#f3ede1" stroke="#2e5226" stroke-width="1.5" class="sta-node" onclick="jumpTo(0)" style="cursor:pointer"/>
+
+          <!-- Station roman numerals -->
+          <text x="130" y="92"  font-family="'Cormorant Garamond',serif" font-size="7" fill="#2e5226" text-anchor="middle" dominant-baseline="middle">VI</text>
+          <text x="150" y="182" font-family="'Cormorant Garamond',serif" font-size="7" fill="#2e5226" text-anchor="middle" dominant-baseline="middle">V</text>
+          <text x="156" y="232" font-family="'Cormorant Garamond',serif" font-size="7" fill="#2e5226" text-anchor="middle" dominant-baseline="middle">IV</text>
+          <text x="138" y="332" font-family="'Cormorant Garamond',serif" font-size="7" fill="#2e5226" text-anchor="middle" dominant-baseline="middle">III</text>
+          <text x="122" y="378" font-family="'Cormorant Garamond',serif" font-size="7" fill="#2e5226" text-anchor="middle" dominant-baseline="middle">II</text>
+          <text x="108" y="428" font-family="'Cormorant Garamond',serif" font-size="7" fill="#2e5226" text-anchor="middle" dominant-baseline="middle">I</text>
+
+          <!-- Station name labels -->
+          <text x="178" y="92"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#506048" opacity=".8">Summit</text>
+          <text x="172" y="182" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#506048" opacity=".8">Cache</text>
+          <text x="177" y="232" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#506048" opacity=".8">Atelier</text>
+          <text x="160" y="332" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#506048" opacity=".8">Highland</text>
+          <text x="144" y="378" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#506048" opacity=".8">Crossing</text>
+          <text x="130" y="428" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#506048" opacity=".8">Trailhead</text>
+
+          <!-- TRAM CAR — animated marker -->
+          <!-- gondola body -->
+          <g id="tramCar">
+            <rect x="-10" y="-7" width="20" height="12" rx="3"
+              fill="#f3ede1" stroke="#2e5226" stroke-width="1.5"/>
+            <!-- window -->
+            <rect x="-5" y="-4" width="10" height="6" rx="1"
+              fill="none" stroke="#4a7a40" stroke-width="1"/>
+            <!-- cable attach -->
+            <line x1="0" y1="-7" x2="0" y2="-11" stroke="#2e5226" stroke-width="1.2"/>
+            <circle cx="0" cy="-12" r="2" fill="#2e5226"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="map-contact">
+        <a href="mailto:cjhoy@iastate.edu" class="contact-row">
+          <span class="ck">mail</span><span class="cv">cjhoy@iastate.edu</span>
+        </a>
+        <a href="tel:+13192403504" class="contact-row">
+          <span class="ck">tel</span><span class="cv">319.240.3504</span>
+        </a>
+        <a href="#" class="contact-row">
+          <span class="ck">in</span><span class="cv">cooperhoy</span>
+        </a>
+        <a href="#" class="contact-row">
+          <span class="ck">gh</span><span class="cv">34coopatroopa</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- CONTENT COLUMN -->
+    <div class="content-col">
+      <div class="slide-window" id="slideWindow">
+
+        <!-- Station VI — Summit (index 0) -->
+        <div class="station-slide active" data-i="0">
+          <div class="sl-elev">6,643 ft</div>
+          <div class="sl-num">Station VI · The Summit</div>
+          <div class="sl-title">FIRST <em>Tech Challenge</em></div>
+          <div class="sl-sub">Mentor · Grundy Center, IA · 2023 — Present</div>
+          <div class="sl-lede">The summit is paying it forward — thirty-plus students, three robotics teams, and a season that ends in February with something that actually works.</div>
+          <ul class="sl-moments">
+            <li>Mentoring FTC Teams 13186, 14375, and 10069 across mechanical design, Java robot programming, and match strategy.</li>
+            <li>Coaching students from rough prototype to competition-ready robot — debugging, documentation, and engineering communication included.</li>
+            <li>Helping students learn to think like engineers: identify root causes, communicate clearly, iterate fast under pressure.</li>
+          </ul>
+          <div class="sl-tags">
+            <span class="sl-tag">30+ Students</span><span class="sl-tag">3 Teams</span>
+            <span class="sl-tag">Java</span><span class="sl-tag">Mechanical Design</span>
+          </div>
+        </div>
+
+        <!-- Station V — Cache (index 1) -->
+        <div class="station-slide" data-i="1">
+          <div class="sl-elev">5,540 ft</div>
+          <div class="sl-num">Station V · The Cache</div>
+          <div class="sl-title">The <em>kit</em></div>
+          <div class="sl-sub">Tools used in earnest — not just listed</div>
+          <div class="sl-lede">A working inventory of languages, platforms, and tools that have actually shipped something, hardened something, or fixed something in the real world.</div>
+          <ul class="sl-moments">
+            <li>Python, Java, Spring Boot, PowerShell, Git, LangChain, OpenCV</li>
+            <li>Windows Server, Linux, VMware, Hyper-V, Active Directory, Group Policy, Exchange</li>
+            <li>Cryptography, Server Hardening, Network Config, Auth Systems, Pen Testing Fundamentals</li>
+            <li>MariaDB, SQL, API Integration, Raspberry Pi, RISC-V, Assembly Programming</li>
+          </ul>
+          <div class="sl-tags">
+            <span class="sl-tag">Python</span><span class="sl-tag">Java</span>
+            <span class="sl-tag">PowerShell</span><span class="sl-tag">Linux</span><span class="sl-tag">VMware</span>
+          </div>
+        </div>
+
+        <!-- Station IV — Atelier (index 2) -->
+        <div class="station-slide" data-i="2">
+          <div class="sl-elev">4,910 ft</div>
+          <div class="sl-num">Station IV · The Atelier</div>
+          <div class="sl-title">Three <em>side builds</em></div>
+          <div class="sl-sub">Personal projects · 2025</div>
+          <div class="sl-lede">A workshop hewn into the rock — where the small, weird, useful things get built around real problems.</div>
+          <ul class="sl-moments">
+            <li><b>Nerd Market</b> — Stock-ticker price tracker for TCG markets. Spring Boot, MariaDB, OpenCV, TCGPlayer API.</li>
+            <li><b>Outpost</b> — Portable offline survival computer on Raspberry Pi 5 with local Ollama Phi-3.</li>
+            <li><b>HelpLlama</b> — Python helpdesk chatbot using RAG over internal docs and ticket history.</li>
+          </ul>
+          <div class="sl-tags">
+            <span class="sl-tag">Spring Boot</span><span class="sl-tag">Raspberry Pi</span>
+            <span class="sl-tag">LangChain</span><span class="sl-tag">RAG</span><span class="sl-tag">OpenCV</span>
+          </div>
+        </div>
+
+        <!-- Station III — Highland (index 3) -->
+        <div class="station-slide" data-i="3">
+          <div class="sl-elev">3,840 ft</div>
+          <div class="sl-num">Station III · The Highland</div>
+          <div class="sl-title">Cambridge <em>Investments</em></div>
+          <div class="sl-sub">IT Infrastructure Engineer · HCI Team · 2024 — 2025</div>
+          <div class="sl-lede">A year above the treeline. Enterprise infrastructure that quietly keeps everything alive — until something breaks and everyone suddenly remembers it exists.</div>
+          <ul class="sl-moments">
+            <li>Configured and deployed Windows Server 2025 inside VMware to support Active Directory and file-sharing services.</li>
+            <li>Built an isolated AD sandbox environment for safely testing new products and configurations.</li>
+            <li>Developed Group Policy hardening baselines that set a new endpoint security standard.</li>
+            <li>Managed Exchange settings, monitored infrastructure health, and assisted with outage response.</li>
+          </ul>
+          <div class="sl-tags">
+            <span class="sl-tag">Win Server 2025</span><span class="sl-tag">VMware</span>
+            <span class="sl-tag">Active Directory</span><span class="sl-tag">Group Policy</span>
+          </div>
+        </div>
+
+        <!-- Station II — Crossing (index 4) -->
+        <div class="station-slide" data-i="4">
+          <div class="sl-elev">2,280 ft</div>
+          <div class="sl-num">Station II · The Crossing</div>
+          <div class="sl-title">ISU <em>IT Solution Center</em></div>
+          <div class="sl-sub">Team Lead · Senior Technical Support · 2023 — Present</div>
+          <div class="sl-lede">Frontline IT for a campus of tens of thousands. The first crossing — where a student learns to lead a team and own a process.</div>
+          <ul class="sl-moments">
+            <li>Rebuilt new-hire onboarding from scratch, cutting ramp time from six weeks to two.</li>
+            <li>Standardized ticket templates for the highest-volume issue categories across the team.</li>
+            <li>Authored knowledge-base articles that measurably improved first-call resolution rates.</li>
+            <li>Managed daily operations, scheduling, and technical escalations for a rotating team of 10–15 student technicians.</li>
+          </ul>
+          <div class="sl-tags">
+            <span class="sl-tag">Team Lead</span><span class="sl-tag">10–15 Techs</span>
+            <span class="sl-tag">Onboarding</span><span class="sl-tag">Knowledge Base</span>
+          </div>
+        </div>
+
+        <!-- Station I — Trailhead (index 5) -->
+        <div class="station-slide" data-i="5">
+          <div class="sl-elev">1,460 ft</div>
+          <div class="sl-num">Station I · The Trailhead</div>
+          <div class="sl-title">Iowa State <em>University</em></div>
+          <div class="sl-sub">B.S. Cyber Security Engineering · Class of '27</div>
+          <div class="sl-lede">Where the path begins. Systems, networks, cryptography, and the math that makes secure infrastructure behave.</div>
+          <ul class="sl-moments">
+            <li>Built a hardware-scheduled, five-stage pipelined RISC-V processor at the assembly level.</li>
+            <li>Deployed enterprise LDAP, DNS, web, mail, and security servers in hardening labs.</li>
+            <li>Completed penetration testing environments and networked systems coursework.</li>
+          </ul>
+          <div class="sl-tags">
+            <span class="sl-tag">Cryptography</span><span class="sl-tag">RISC-V</span>
+            <span class="sl-tag">Networking</span><span class="sl-tag">Pen Testing</span>
+          </div>
+        </div>
+
+      </div><!-- slide-window -->
+
+      <div class="content-nav">
+        <button class="nav-arrow" id="navPrev" onclick="go(-1)">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+            <polyline points="6,1 2,4.5 6,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Higher
+        </button>
+        <div class="progress-dots" id="dots"></div>
+        <button class="nav-arrow" id="navNext" onclick="go(1)">
+          Lower
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+            <polyline points="3,1 7,4.5 3,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- main -->
+</div>
+
+<script>
+  /* ── Tram positions along the path (matching station nodes) ── */
+  /* order: VI(summit)=0 … I(trailhead)=5 */
+  const TRAM_POS = [
+    {x: 140, y: 88},   // VI summit
+    {x: 160, y: 178},  // V cache
+    {x: 166, y: 228},  // IV atelier
+    {x: 148, y: 328},  // III highland
+    {x: 132, y: 374},  // II crossing
+    {x: 118, y: 424},  // I trailhead
+  ];
+
+  const TOTAL = 6;
+  let cur = 0, animating = false;
+
+  const slides = document.querySelectorAll('.station-slide');
+  const nodes  = document.querySelectorAll('.sta-node');
+  const tramCar = document.getElementById('tramCar');
+  const dotsEl  = document.getElementById('dots');
+
+  /* Build dots */
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => jumpTo(i);
+    dotsEl.appendChild(d);
+  }
+
+  /* Place tram initially */
+  moveTram(0, false);
+
+  function moveTram(idx, animate) {
+    const p = TRAM_POS[idx];
+    if (animate) {
+      tramCar.style.transition = 'transform .7s cubic-bezier(.4,0,.2,1)';
+    } else {
+      tramCar.style.transition = 'none';
+    }
+    tramCar.setAttribute('transform', `translate(${p.x}, ${p.y})`);
+  }
+
+  function updateUI() {
+    /* slides */
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'exit-up');
+    });
+    /* dots */
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+    /* nodes — highlight active */
+    nodes.forEach((n, i) => {
+      /* nodes are ordered VI…I so index 0=VI=cur0 */
+      n.setAttribute('fill', i === cur ? '#2e5226' : '#f3ede1');
+    });
+    /* arrows */
+    document.getElementById('navPrev').disabled = cur === 0;
+    document.getElementById('navNext').disabled = cur === TOTAL - 1;
+  }
+
+  function go(dir) {
+    if (animating) return;
+    const next = cur + dir;
+    if (next < 0 || next >= TOTAL) return;
+    animating = true;
+
+    const old = slides[cur];
+    old.classList.remove('active');
+    old.classList.add('exit-up');
+
+    cur = next;
+    moveTram(cur, true);
+
+    const newSlide = slides[cur];
+    newSlide.style.opacity = '0';
+    newSlide.style.transform = 'translateY(40px)';
+    newSlide.style.transition = 'none';
+    newSlide.classList.add('active');
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      newSlide.style.transition = '';
+      newSlide.style.opacity = '1';
+      newSlide.style.transform = 'translateY(0)';
+      updateUI();
+      setTimeout(() => {
+        old.classList.remove('exit-up');
+        animating = false;
+      }, 520);
+    }));
+  }
+
+  function jumpTo(i) {
+    if (i === cur || animating) return;
+    const dir = i > cur ? 1 : -1;
+    function step() {
+      if (cur === i) return;
+      go(dir);
+      if (cur !== i) setTimeout(step, 550);
+    }
+    step();
+  }
+
+  function enter() {
+    document.getElementById('landing').classList.add('hidden');
+    document.getElementById('main').classList.add('visible');
+    updateUI();
+  }
+
+  function leave() {
+    document.getElementById('main').classList.remove('visible');
+    document.getElementById('landing').classList.remove('hidden');
+  }
+
+  /* Keyboard */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+    if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); }
+    if (e.key === 'Escape') leave();
+  });
+
+  updateUI();
+</script>
+</body>
+</html>
