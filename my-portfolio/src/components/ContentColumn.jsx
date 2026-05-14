@@ -9,6 +9,7 @@ const LABELS = [
   'Cambridge Investments',
   'ISU IT Solution Center',
   'Iowa State University',
+  'The Homelab',
   'Off the Trail',
 ]
 

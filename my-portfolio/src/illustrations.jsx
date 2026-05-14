@@ -172,6 +172,41 @@ function IllustrationI() {
   )
 }
 
+function IllustrationHomelab() {
+  return (
+    <div className="fig-box">
+      <svg viewBox="0 0 280 120" fill="none">
+        <rect x="18" y="18" width="52" height="76" rx="2" fill="none" stroke="#4e8a3c" strokeWidth="1.2"/>
+        {[28, 41, 54, 67, 80].map((y, i) => (
+          <g key={y}>
+            <rect x="24" y={y} width="40" height="9" rx="1" fill="var(--mist)" stroke="#4e8a3c" strokeWidth=".8"/>
+            <circle cx="60" cy={y+4.5} r="2" fill="#a0cc84" style={{ animation: `blink ${1+i*.2}s ease-in-out ${i*.25}s infinite` }}/>
+          </g>
+        ))}
+        <text x="44" y="106" textAnchor="middle" fontFamily="'JetBrains Mono',monospace" fontSize="7" fill="#6aa058">NAS</text>
+        <line x1="70" y1="56" x2="108" y2="42" stroke="#a0cc84" strokeWidth=".9" strokeDasharray="4,3" style={{ animation: 'dash 2s linear infinite' }}/>
+        <line x1="70" y1="56" x2="108" y2="70" stroke="#a0cc84" strokeWidth=".9" strokeDasharray="4,3" style={{ animation: 'dash 2s linear .5s infinite' }}/>
+        <rect x="108" y="30" width="56" height="26" rx="2" fill="none" stroke="#4e8a3c" strokeWidth="1"/>
+        <circle cx="126" cy="43" r="7" fill="none" stroke="#4e8a3c" strokeWidth=".8"/>
+        <circle cx="126" cy="43" r="2.5" fill="#a0cc84" style={{ animation: 'pulse 1.5s ease-in-out infinite' }}/>
+        <text x="148" y="47" fontFamily="'JetBrains Mono',monospace" fontSize="6.5" fill="#6aa058">Pi-hole</text>
+        <rect x="108" y="62" width="56" height="28" rx="2" fill="none" stroke="#4e8a3c" strokeWidth="1"/>
+        <rect x="116" y="68" width="10" height="8" rx="1" fill="var(--mist)" stroke="#4e8a3c" strokeWidth=".7"/>
+        <rect x="130" y="68" width="10" height="8" rx="1" fill="var(--mist)" stroke="#4e8a3c" strokeWidth=".7"/>
+        <circle cx="152" cy="76" r="3" fill="none" stroke="#4e8a3c" strokeWidth=".8"/>
+        <text x="136" y="86" textAnchor="middle" fontFamily="'JetBrains Mono',monospace" fontSize="6.5" fill="#6aa058">RPi 5</text>
+        <line x1="164" y1="43" x2="200" y2="48" stroke="#a0cc84" strokeWidth=".9" strokeDasharray="4,3" style={{ animation: 'dash 2s linear 1s infinite' }}/>
+        <rect x="200" y="34" width="62" height="56" rx="2" fill="none" stroke="#6aa058" strokeWidth="1"/>
+        <text x="231" y="54" textAnchor="middle" fontFamily="'JetBrains Mono',monospace" fontSize="7" fill="#6aa058">Ollama</text>
+        <rect x="210" y="59" width="42" height="4" rx="1" fill="#a0cc84" opacity=".45" style={{ animation: 'pulse 2s ease-in-out infinite' }}/>
+        <rect x="210" y="67" width="34" height="4" rx="1" fill="#a0cc84" opacity=".35" style={{ animation: 'pulse 2s ease-in-out .5s infinite' }}/>
+        <rect x="210" y="75" width="38" height="4" rx="1" fill="#a0cc84" opacity=".4" style={{ animation: 'pulse 2s ease-in-out 1s infinite' }}/>
+        <text x="231" y="99" textAnchor="middle" fontFamily="'JetBrains Mono',monospace" fontSize="6" fill="#6aa058" opacity=".7">local LLM</text>
+      </svg>
+    </div>
+  )
+}
+
 function IllustrationHobby({ photos }) {
   const rows = [photos.slice(0, 3), photos.slice(3, 6), photos.slice(6, 9)]
   return (
@@ -196,5 +231,6 @@ export const ILLUSTRATIONS = [
   IllustrationIII,
   IllustrationII,
   IllustrationI,
+  IllustrationHomelab,
   IllustrationHobby,
 ]

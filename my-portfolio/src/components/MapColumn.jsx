@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react'
 import { NODE_POS } from '../data/stations'
 
-const TRAM_PATH = "M 160,82 C 167,102 175,120 181,142 C 187,164 179,180 173,200 C 167,220 173,236 177,256 C 181,276 172,290 165,310 C 158,330 158,348 155,368 C 152,388 144,402 136,422 C 128,442 122,456 116,476 C 110,496 106,510 102,530"
+const TRAM_PATH = "M 160,82 C 167,102 175,120 181,142 C 187,164 179,180 173,200 C 167,220 173,236 177,256 C 181,276 172,290 165,310 C 158,330 158,348 155,368 C 152,388 144,402 136,422 C 128,422 122,432 116,440 C 113,454 110,470 107,488 C 105,502 102,516 100,530"
 
 const LABELS = [
   'FIRST Tech Challenge',
@@ -10,10 +10,11 @@ const LABELS = [
   'Cambridge Investments',
   'ISU IT Solution Center',
   'Iowa State University',
+  'The Homelab',
   'Off the Trail',
 ]
 
-const NODES = ['VI', 'V', 'IV', 'III', 'II', 'I', '🌿']
+const NODES = ['VI', 'V', 'IV', 'III', 'II', 'I', 'H', '🌿']
 
 export default function MapColumn({ curSlide, onSelect, onBack, mapOpen }) {
   const tramRef    = useRef(null)
@@ -65,11 +66,12 @@ export default function MapColumn({ curSlide, onSelect, onBack, mapOpen }) {
   const elevLabels = [
     { y: 85,  t: "6,643'" },
     { y: 204, t: "5,540'" },
-    { y: 262, t: "4,910'" },
-    { y: 320, t: "3,840'" },
-    { y: 377, t: "2,280'" },
-    { y: 454, t: "1,460'" },
-    { y: 527, t: "800'"   },
+    { y: 260, t: "4,910'" },
+    { y: 314, t: "3,840'" },
+    { y: 372, t: "2,280'" },
+    { y: 443, t: "1,460'" },
+    { y: 491, t: "380'"   },
+    { y: 530, t: "800'"   },
   ]
 
   const contours = [
@@ -84,7 +86,7 @@ export default function MapColumn({ curSlide, onSelect, onBack, mapOpen }) {
 
   const towerLines = [
     [179,132,145], [175,192,204], [176,248,260],
-    [162,302,315], [155,360,372], [120,468,480],
+    [162,302,315], [155,360,372], [120,434,446], [108,480,492],
   ]
 
   const leftTreeYs  = [145,163,183,204,224,245,265,285,308,330,352,374,396,418,440,462,484,506]
@@ -110,7 +112,7 @@ export default function MapColumn({ curSlide, onSelect, onBack, mapOpen }) {
         </button>
         <div className="map-title-wrap">
           <div className="map-title">Ascent Map</div>
-          <div className="map-sub">Summit → Valley · 7 stations</div>
+          <div className="map-sub">Summit → Valley · 8 stations</div>
         </div>
       </div>
 
@@ -177,7 +179,7 @@ export default function MapColumn({ curSlide, onSelect, onBack, mapOpen }) {
                 strokeWidth={i === curSlide ? 1.5 : 1}/>
               <text x={p.x} y={p.y + 3.5} textAnchor="middle"
                 fontFamily="'Cormorant Garamond',serif"
-                fontSize={i === 6 ? 9 : 8} fill="#224618" fontWeight="600">
+                fontSize={i === 7 ? 9 : 8} fill="#224618" fontWeight="600">
                 {NODES[i]}
               </text>
             </g>
