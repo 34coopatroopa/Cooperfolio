@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { ILLUSTRATIONS } from '../illustrations'
 
 const PinIcon = () => (
@@ -19,8 +20,56 @@ function HighlightCell({ k, v, vEm, vSuffix }) {
 }
 
 export default function Slide({ station, isActive, isLeaving }) {
+  const photos = station.photos || []
+  const [bgIdx, setBgIdx] = useState(0)
+
+  useEffect(() => {
+    if (!isActive || photos.length === 0) return
+    const t = setInterval(() => setBgIdx(i => (i + 1) % photos.length), 5500)
+    return () => clearInterval(t)
+  }, [isActive, photos.length])
+
+  const baseCls = ['slide', isActive ? 'active' : '', isLeaving ? 'leaving' : ''].filter(Boolean)
+
+  if (station.idx === 7) {
+    return (
+      <div className={[...baseCls, 'contact'].join(' ')} data-i={station.idx}>
+        <div className="cs-bg">
+          {photos.map((p, i) => (
+            <div
+              key={p.src}
+              className={`cs-bg-img${i === bgIdx ? ' on' : ''}`}
+              style={{ backgroundImage: `url(${p.src})` }}
+            />
+          ))}
+        </div>
+        <div className="cs-overlay" />
+        <div className="cs-body">
+          <div className="cs-quote-wrap">
+            <p className="cs-quote">"If we were meant to stay in one place, we would have roots instead of feet"</p>
+            <p className="cs-attr">— Rachel Wolchin</p>
+          </div>
+          <div className="cs-contact">
+            <a href="mailto:cjhoy@iastate.edu" className="cs-link">
+              <span className="cs-k">mail</span><span className="cs-v">cjhoy@iastate.edu</span>
+            </a>
+            <a href="tel:+13192403504" className="cs-link">
+              <span className="cs-k">tel</span><span className="cs-v">319.240.3504</span>
+            </a>
+            <a href="https://linkedin.com/in/cooperhoy" target="_blank" rel="noreferrer" className="cs-link">
+              <span className="cs-k">in</span><span className="cs-v">linkedin.com/in/cooperhoy</span>
+            </a>
+            <a href="https://github.com/34coopatroopa" target="_blank" rel="noreferrer" className="cs-link">
+              <span className="cs-k">gh</span><span className="cs-v">34coopatroopa</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const Illustration = ILLUSTRATIONS[station.idx]
-  const cls = ['slide', isActive ? 'active' : '', isLeaving ? 'leaving' : ''].filter(Boolean).join(' ')
+  const cls = baseCls.join(' ')
 
   return (
     <div className={cls} data-i={station.idx}>
@@ -33,10 +82,7 @@ export default function Slide({ station, isActive, isLeaving }) {
       <div className="sl-sub">{station.sub}</div>
       {station.desc && <p className="sl-desc">{station.desc}</p>}
 
-      {station.idx === 7
-        ? <Illustration photos={station.photos} />
-        : <Illustration />
-      }
+      <Illustration />
 
       {station.highlights && (
         <>

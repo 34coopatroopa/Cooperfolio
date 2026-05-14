@@ -200,6 +200,67 @@ html, body { height: 100%; font-family: var(--sans); background: var(--cream); c
 .ndot.on { background: var(--f2); transform: scale(1.55); }
 .nav-sname { font-family: var(--mono); font-size: 8px; letter-spacing: .16em; color: var(--ink-dim); text-transform: uppercase; }
 
+/* contact slide */
+.slide.contact { padding: 0; overflow: hidden; }
+.cs-bg { position: absolute; inset: 0; }
+.cs-bg-img {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0; transition: opacity 2s ease;
+}
+.cs-bg-img.on {
+  opacity: 1;
+  animation: kenburns 14s ease-in-out infinite;
+}
+@keyframes kenburns {
+  0%   { transform: scale(1.05) translate(0,0); }
+  33%  { transform: scale(1.08) translate(-0.8%,-0.5%); }
+  66%  { transform: scale(1.06) translate(0.5%,-0.8%); }
+  100% { transform: scale(1.05) translate(0,0); }
+}
+.cs-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10,20,8,.2) 0%,
+    rgba(10,20,8,.45) 45%,
+    rgba(10,20,8,.88) 100%
+  );
+}
+.cs-body {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 60px 52px;
+}
+.cs-quote-wrap { margin-bottom: 36px; max-width: 680px; }
+.cs-quote {
+  font-family: var(--serif);
+  font-size: clamp(20px, 2.8vw, 34px);
+  font-weight: 300; font-style: italic;
+  color: #f0ebe0; line-height: 1.5;
+  text-shadow: 0 2px 24px rgba(0,0,0,.5);
+  margin-bottom: 14px;
+}
+.cs-attr {
+  font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: .3em; color: rgba(192,222,160,.65);
+  text-transform: uppercase;
+}
+.cs-contact { display: flex; gap: 28px; flex-wrap: wrap; }
+.cs-link {
+  display: flex; gap: 10px; align-items: baseline;
+  text-decoration: none; color: inherit; transition: opacity .2s;
+  opacity: .75;
+}
+.cs-link:hover { opacity: 1; }
+.cs-k {
+  font-family: var(--mono); font-size: 7.5px;
+  letter-spacing: .22em; color: rgba(192,222,160,.6);
+  text-transform: uppercase;
+}
+.cs-v { font-size: 12px; color: rgba(240,235,224,.85); }
+
 /* mobile */
 .mobile-map-btn { display: none; }
 @media (max-width: 768px) {
@@ -218,6 +279,8 @@ html, body { height: 100%; font-family: var(--sans); background: var(--cream); c
   .photo-lb { padding: 16px 48px; }
   .lb-nav { font-size: 40px; padding: 10px 14px; }
   .hobby-cards { grid-template-columns: 1fr; }
+  .cs-body { padding: 0 24px 36px; }
+  .cs-contact { gap: 16px; flex-direction: column; }
   .fig-box { height: 160px; }
 }
 
