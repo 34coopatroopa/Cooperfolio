@@ -235,12 +235,6 @@ export default function MapColumn({ curSlide, onSelect, onBack, mapOpen }) {
         </svg>
       </div>
 
-      <div className="map-foot">
-        <a href="mailto:cjhoy@iastate.edu" className="clink"><span className="ck">mail</span><span className="cv">cjhoy@iastate.edu</span></a>
-        <a href="tel:+13192403504" className="clink"><span className="ck">tel</span><span className="cv">319.240.3504</span></a>
-        <a href="https://linkedin.com/in/cooperhoy" target="_blank" rel="noreferrer" className="clink"><span className="ck">in</span><span className="cv">linkedin.com/in/cooperhoy</span></a>
-        <a href="https://github.com/34coopatroopa" target="_blank" rel="noreferrer" className="clink"><span className="ck">gh</span><span className="cv">34coopatroopa</span></a>
-      </div>
     </div>
   )
 }

@@ -49,18 +49,22 @@ export default function Slide({ station, isActive, isLeaving }) {
             <p className="cs-quote">"If we were meant to stay in one place, we would have roots instead of feet"</p>
             <p className="cs-attr">— Rachel Wolchin</p>
           </div>
-          <div className="cs-contact">
-            <a href="mailto:cjhoy@iastate.edu" className="cs-link">
-              <span className="cs-k">mail</span><span className="cs-v">cjhoy@iastate.edu</span>
+          <div className="cs-btns">
+            <a href="mailto:cjhoy@iastate.edu" className="cs-btn">
+              <span className="cs-btn-label">Email</span>
+              <span className="cs-btn-val">cjhoy@iastate.edu</span>
             </a>
-            <a href="tel:+13192403504" className="cs-link">
-              <span className="cs-k">tel</span><span className="cs-v">319.240.3504</span>
+            <a href="tel:+13192403504" className="cs-btn">
+              <span className="cs-btn-label">Phone</span>
+              <span className="cs-btn-val">319.240.3504</span>
             </a>
-            <a href="https://linkedin.com/in/cooperhoy" target="_blank" rel="noreferrer" className="cs-link">
-              <span className="cs-k">in</span><span className="cs-v">linkedin.com/in/cooperhoy</span>
+            <a href="https://linkedin.com/in/cooperhoy" target="_blank" rel="noreferrer" className="cs-btn">
+              <span className="cs-btn-label">LinkedIn</span>
+              <span className="cs-btn-val">cooperhoy</span>
             </a>
-            <a href="https://github.com/34coopatroopa" target="_blank" rel="noreferrer" className="cs-link">
-              <span className="cs-k">gh</span><span className="cs-v">34coopatroopa</span>
+            <a href="https://github.com/34coopatroopa" target="_blank" rel="noreferrer" className="cs-btn">
+              <span className="cs-btn-label">GitHub</span>
+              <span className="cs-btn-val">34coopatroopa</span>
             </a>
           </div>
         </div>

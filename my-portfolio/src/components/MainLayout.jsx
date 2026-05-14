@@ -12,7 +12,7 @@ export default function MainLayout({ onBack, active }) {
   }
 
   return (
-    <div className={`main${active ? ' in' : ''}`}>
+    <div className={`main${active ? ' in' : ''}${curSlide === 7 ? ' contact-mode' : ''}`}>
       <MapColumn
         curSlide={curSlide}
         onSelect={handleSelect}
