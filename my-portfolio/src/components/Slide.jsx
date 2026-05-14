@@ -34,6 +34,7 @@ export default function Slide({ station, isActive, isLeaving }) {
   if (station.idx === 7) {
     return (
       <div className={[...baseCls, 'contact'].join(' ')} data-i={station.idx}>
+        <div className="cs-bar top" />
         <div className="cs-bg">
           {photos.map((p, i) => (
             <div
@@ -44,6 +45,7 @@ export default function Slide({ station, isActive, isLeaving }) {
           ))}
         </div>
         <div className="cs-overlay" />
+        <div className="cs-bar bot" />
         <div className="cs-body">
           <div className="cs-quote-wrap">
             <p className="cs-quote">"If we were meant to stay in one place, we would have roots instead of feet"</p>

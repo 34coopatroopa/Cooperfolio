@@ -203,68 +203,74 @@ html, body { height: 100%; font-family: var(--sans); background: var(--cream); c
 .nav-sname { font-family: var(--mono); font-size: 8px; letter-spacing: .16em; color: var(--ink-dim); text-transform: uppercase; }
 
 /* contact slide */
+.main.contact-mode .content-nav { display: none; }
 .slide.contact { padding: 0; overflow: hidden; }
+
+.cs-bar { position: absolute; left: 0; right: 0; height: 48px; background: #050d04; z-index: 6; pointer-events: none; }
+.cs-bar.top { top: 0; }
+.cs-bar.bot { bottom: 0; }
+
 .cs-bg { position: absolute; inset: 0; }
 .cs-bg-img {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
-  opacity: 0; transition: opacity 2s ease;
+  opacity: 0; transition: opacity 2.2s ease;
+  will-change: transform, opacity;
 }
 .cs-bg-img.on {
   opacity: 1;
-  animation: kenburns 14s ease-in-out infinite;
+  animation: kenburns 16s ease-in-out infinite;
 }
 @keyframes kenburns {
-  0%   { transform: scale(1.05) translate(0,0); }
-  33%  { transform: scale(1.08) translate(-0.8%,-0.5%); }
-  66%  { transform: scale(1.06) translate(0.5%,-0.8%); }
-  100% { transform: scale(1.05) translate(0,0); }
+  0%   { transform: scale(1)    translate(0,0); }
+  50%  { transform: scale(1.05) translate(-0.6%,-0.4%); }
+  100% { transform: scale(1)    translate(0,0); }
 }
 .cs-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(10,20,8,.2) 0%,
-    rgba(10,20,8,.45) 45%,
-    rgba(10,20,8,.88) 100%
-  );
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    radial-gradient(ellipse at 50% 35%, transparent 20%, rgba(0,0,0,.42) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,.05) 0%, rgba(0,0,0,.18) 40%, rgba(0,0,0,.78) 80%, rgba(0,0,0,.94) 100%);
 }
 .cs-body {
-  position: absolute; inset: 0;
+  position: absolute;
+  top: 48px; bottom: 48px; left: 0; right: 0;
+  z-index: 5;
   display: flex; flex-direction: column;
   justify-content: flex-end;
-  padding: 0 60px 52px;
+  padding: 0 60px 44px;
 }
-.cs-quote-wrap { margin-bottom: 36px; max-width: 680px; }
+.cs-quote-wrap { margin-bottom: 40px; max-width: 700px; }
 .cs-quote {
   font-family: var(--serif);
-  font-size: clamp(20px, 2.8vw, 34px);
+  font-size: clamp(22px, 3vw, 38px);
   font-weight: 300; font-style: italic;
-  color: #f0ebe0; line-height: 1.5;
-  text-shadow: 0 2px 24px rgba(0,0,0,.5);
-  margin-bottom: 14px;
+  color: rgba(243,237,220,.97); line-height: 1.48;
+  text-shadow: 0 2px 32px rgba(0,0,0,.65);
+  margin-bottom: 16px;
 }
 .cs-attr {
   font-family: var(--mono); font-size: 9.5px;
-  letter-spacing: .3em; color: rgba(192,222,160,.65);
+  letter-spacing: .38em; color: rgba(160,204,128,.65);
   text-transform: uppercase;
 }
-.cs-btns { display: grid; grid-template-columns: repeat(2, auto); gap: 10px; }
+.cs-btns {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: rgba(192,222,160,.14);
+}
 .cs-btn {
-  display: flex; flex-direction: column; gap: 4px;
-  padding: 16px 24px; min-width: 200px;
-  background: rgba(14,26,10,.6);
-  border: 1px solid rgba(192,222,160,.2);
-  backdrop-filter: blur(10px);
+  display: flex; flex-direction: column; gap: 5px;
+  padding: 18px 26px;
+  background: rgba(8,18,6,.72);
   text-decoration: none;
-  transition: background .25s, border-color .25s;
+  transition: background .25s;
 }
-.cs-btn:hover { background: rgba(14,26,10,.85); border-color: rgba(192,222,160,.5); }
+.cs-btn:hover { background: rgba(8,18,6,.92); }
 .cs-btn-label {
-  font-family: var(--mono); font-size: 8px; letter-spacing: .28em;
-  text-transform: uppercase; color: rgba(192,222,160,.55);
+  font-family: var(--mono); font-size: 7.5px; letter-spacing: .32em;
+  text-transform: uppercase; color: rgba(160,204,128,.5);
 }
-.cs-btn-val { font-size: 14px; color: rgba(240,235,224,.9); }
+.cs-btn-val { font-size: 15px; color: rgba(242,236,222,.92); }
 
 /* mobile */
 .mobile-map-btn { display: none; }
@@ -284,9 +290,8 @@ html, body { height: 100%; font-family: var(--sans); background: var(--cream); c
   .photo-lb { padding: 16px 48px; }
   .lb-nav { font-size: 40px; padding: 10px 14px; }
   .hobby-cards { grid-template-columns: 1fr; }
-  .cs-body { padding: 0 24px 36px; }
+  .cs-body { padding: 0 24px 32px; }
   .cs-btns { grid-template-columns: 1fr; }
-  .cs-btn { min-width: 0; }
   .fig-box { height: 160px; }
 }
 
