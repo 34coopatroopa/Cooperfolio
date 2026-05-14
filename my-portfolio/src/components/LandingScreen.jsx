@@ -38,7 +38,7 @@ export default function LandingScreen({ onEnter, out }) {
                 <polyline points="4,8 10,14 16,8" stroke="rgba(192,222,160,.9)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <span className="enter-label">Enter the ascent</span>
+            <span className="enter-label">Enter the descent</span>
           </button>
         </div>
       </div>

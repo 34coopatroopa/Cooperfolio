@@ -111,7 +111,7 @@ export default function MapColumn({ curSlide, onSelect, onBack, mapOpen }) {
           Back
         </button>
         <div className="map-title-wrap">
-          <div className="map-title">Ascent Map</div>
+          <div className="map-title">Descent Map</div>
           <div className="map-sub">Summit → Valley · 8 stations</div>
         </div>
       </div>
