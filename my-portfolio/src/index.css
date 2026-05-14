@@ -204,17 +204,17 @@ html, body { height: 100%; font-family: var(--sans); background: var(--cream); c
 
 /* contact slide */
 .main.contact-mode .content-nav { display: none; }
-.slide.contact { padding: 0; overflow: hidden; }
+.slide.contact { padding: 0; overflow: hidden; background: #050d04; }
 
 .cs-bar { position: absolute; left: 0; right: 0; height: 48px; background: #050d04; z-index: 6; pointer-events: none; }
 .cs-bar.top { top: 0; }
 .cs-bar.bot { bottom: 0; }
 
-.cs-bg { position: absolute; inset: 0; }
+.cs-bg { position: absolute; inset: 0; background: #050d04; }
 .cs-bg-img {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
-  opacity: 0; transition: opacity 2.2s ease;
+  opacity: 0; transition: opacity 2.2s linear;
   will-change: transform, opacity;
 }
 .cs-bg-img.on {
