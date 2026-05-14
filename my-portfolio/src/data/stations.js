@@ -5,6 +5,7 @@ export const STATIONS = [
     stationLabel: 'Station VI · The Summit',
     title: 'FIRST', titleEm: 'Tech Challenge',
     sub: 'Mentor · Grundy Center, IA · 2023 — Present',
+    desc: 'Mentoring three FTC teams in mechanical design, Java robot programming, and competition strategy. Giving back to a program that teaches real engineering through collaboration, iteration, and problem solving under pressure.',
     highlights: [
       { k: 'Students', v: null,       vEm: '30+',      vSuffix: null },
       { k: 'Teams',    v: '3 squads', vEm: null,       vSuffix: null },
@@ -26,6 +27,7 @@ export const STATIONS = [
     stationLabel: 'Station V · The Cache',
     title: 'The', titleEm: 'kit',
     sub: 'Tools used in earnest — not just listed',
+    desc: 'Every tool here has been used to build something, secure something, or fix something in a real environment — from enterprise infrastructure and backend development to embedded systems and self-hosted services.',
     skillGroups: [
       { h: 'Programming & Development', tags: ['Python','Java','Spring Boot','PowerShell','Git','LangChain','OpenCV'] },
       { h: 'Systems & Infrastructure',  tags: ['Windows Server 2025','Linux','VMware','Hyper-V','Active Directory','Group Policy','Exchange'] },
@@ -40,6 +42,7 @@ export const STATIONS = [
     stationLabel: 'Station IV · The Atelier',
     title: 'Five', titleEm: 'side builds',
     sub: 'Personal projects · 2024 — 2025',
+    desc: 'Five personal builds across computer architecture, systems programming, full-stack development, embedded hardware, and AI. Each one started with a real problem worth solving.',
     projects: [
       {
         t: 'RISC-V Processor', st: 'Architecture · 2024',
@@ -74,6 +77,7 @@ export const STATIONS = [
     stationLabel: 'Station III · The Highland',
     title: 'Cambridge', titleEm: 'Investments',
     sub: 'IT Infrastructure Engineer · HCI Team · 2024 — 2025',
+    desc: 'Enterprise infrastructure engineering in a financial technology environment — virtualization, Active Directory, Group Policy, Exchange, and the security baselines that keep production systems reliable and secure.',
     highlights: [
       { k: 'Stint',    v: null,           vEm: '2024–25', vSuffix: null },
       { k: 'Stack',    v: 'Win ',         vEm: '2025',    vSuffix: null },
@@ -95,6 +99,7 @@ export const STATIONS = [
     stationLabel: 'Station II · The Crossing',
     title: 'ISU', titleEm: 'IT Solution Center',
     sub: 'Team Lead · Senior Technical Support · 2023 — Present',
+    desc: 'Frontline IT support for a university campus of tens of thousands, plus team leadership for 10–15 student technicians. The role that taught me that good IT is about building repeatable systems, not just fixing individual problems.',
     highlights: [
       { k: 'Role',    v: null,      vEm: 'Team Lead', vSuffix: null },
       { k: 'Since',   v: '2023 — ', vEm: 'now',       vSuffix: null },
@@ -116,6 +121,7 @@ export const STATIONS = [
     stationLabel: 'Station I · The Trailhead',
     title: 'Iowa State', titleEm: 'University',
     sub: "B.S. Cyber Security Engineering · Class of '27",
+    desc: 'B.S. Cyber Security Engineering, Class of 2027. Coursework spanning cryptography, computer architecture, embedded systems, networking protocols, and cybersecurity fundamentals — with hands-on lab work throughout.',
     highlights: [
       { k: 'Program',   v: null,       vEm: 'B.S.',   vSuffix: ' CSE' },
       { k: 'Since',     v: 'Fall ',    vEm: '2023',   vSuffix: null },
@@ -137,6 +143,7 @@ export const STATIONS = [
     stationLabel: 'Below the Trail · The Homelab',
     title: 'The', titleEm: 'Homelab',
     sub: 'Self-Hosted Infrastructure · 2023 — Present',
+    desc: 'A self-hosted infrastructure environment used to practice networking, Linux administration, storage management, DNS, and local AI. Where things get built, broken, fixed, and documented.',
     hobbyCards: [
       { icon: '🗄️', t: 'Storage & NAS', d: 'Centralized file storage with RAID, network access, and automated backups. Hands-on practice with storage management, data organization, and uptime.' },
       { icon: '🌐', t: 'Network & Pi-hole', d: 'DNS-level filtering with Pi-hole for network-wide ad blocking and traffic visibility. Covers DNS, monitoring, and local network configuration.' },
@@ -150,6 +157,7 @@ export const STATIONS = [
     stationLabel: 'Off the Trail',
     title: 'Life', titleEm: 'beyond the work',
     sub: 'Hiking · Travel · Interests · 2023 — Present',
+    desc: 'The resume ends here. Trails hiked, countries visited, and hobbies that occasionally turn into projects.',
     photos: [
       { src: '/photos/meHiking.jpg',             label: 'On the trail' },
       { src: '/photos/hiking1.jpeg',             label: 'Hiking' },

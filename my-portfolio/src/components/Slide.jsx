@@ -31,6 +31,7 @@ export default function Slide({ station, isActive, isLeaving }) {
       </div>
       <div className="sl-title">{station.title} <em>{station.titleEm}</em></div>
       <div className="sl-sub">{station.sub}</div>
+      {station.desc && <p className="sl-desc">{station.desc}</p>}
 
       {station.idx === 7
         ? <Illustration photos={station.photos} />

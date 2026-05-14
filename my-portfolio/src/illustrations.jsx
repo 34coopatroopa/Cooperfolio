@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import { useState, useEffect } from 'react'
 function IllustrationVI() {
   return (
     <div className="fig-box">
@@ -208,19 +209,46 @@ function IllustrationHomelab() {
 }
 
 function IllustrationHobby({ photos }) {
+  const [activeIdx, setActiveIdx] = useState(null)
+
+  useEffect(() => {
+    if (activeIdx === null) return
+    function onKey(e) {
+      if (e.key === 'ArrowLeft')  setActiveIdx(i => (i - 1 + photos.length) % photos.length)
+      if (e.key === 'ArrowRight') setActiveIdx(i => (i + 1) % photos.length)
+      if (e.key === 'Escape')     setActiveIdx(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [activeIdx, photos.length])
+
   const rows = [photos.slice(0, 3), photos.slice(3, 6), photos.slice(6, 9)]
+  const active = activeIdx !== null ? photos[activeIdx] : null
+
   return (
-    <div className="photo-gallery">
-      {rows.map((row, ri) => (
-        <div key={ri} className="photo-row">
-          {row.map(p => (
-            <div key={p.src} className="photo-cell">
-              <img src={p.src} alt={p.label}/>
-            </div>
-          ))}
+    <>
+      <div className="photo-gallery">
+        {rows.map((row, ri) => (
+          <div key={ri} className="photo-row">
+            {row.map((p, ci) => (
+              <div key={p.src} className="photo-cell" onClick={() => setActiveIdx(ri * 3 + ci)}>
+                <img src={p.src} alt={p.label}/>
+                <span className="photo-label">{p.label}</span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      {active && (
+        <div className="photo-lb" onClick={() => setActiveIdx(null)}>
+          <button className="lb-nav lb-prev" onClick={e => { e.stopPropagation(); setActiveIdx(i => (i - 1 + photos.length) % photos.length) }}>‹</button>
+          <img src={active.src} alt={active.label}/>
+          <button className="lb-nav lb-next" onClick={e => { e.stopPropagation(); setActiveIdx(i => (i + 1) % photos.length) }}>›</button>
+          <span className="lb-label">{active.label}</span>
+          <span className="lb-counter">{activeIdx + 1} / {photos.length}</span>
         </div>
-      ))}
-    </div>
+      )}
+    </>
   )
 }
 

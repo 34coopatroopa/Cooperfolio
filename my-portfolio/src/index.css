@@ -98,14 +98,51 @@ html, body { height: 100%; font-family: var(--sans); background: var(--cream); c
 .fig-box svg { max-width: 100%; max-height: 100%; }
 
 /* photo gallery */
-.photo-gallery { display: flex; flex-direction: column; gap: 5px; margin: 20px 0; }
-.photo-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }
-.photo-cell { position: relative; overflow: hidden; height: 180px; }
-.photo-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
-.photo-cell:hover img { transform: scale(1.04); }
+.photo-gallery { display: flex; flex-direction: column; gap: 6px; margin: 20px 0; }
+.photo-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+.photo-cell { position: relative; overflow: hidden; height: 240px; cursor: zoom-in; }
+.photo-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+.photo-cell:hover img { transform: scale(1.06); }
+.photo-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 28px 10px 9px;
+  background: linear-gradient(to top, rgba(16,28,12,.72) 0%, transparent 100%);
+  font-family: var(--mono); font-size: 8px; letter-spacing: .24em;
+  color: rgba(192,222,160,.9); text-transform: uppercase;
+  opacity: 0; transition: opacity .35s; pointer-events: none;
+}
+.photo-cell:hover .photo-label { opacity: 1; }
 
-/* lede */
-.sl-lede { font-family: var(--serif); font-size: clamp(16px,1.9vw,19px); font-weight: 300; font-style: italic; color: var(--ink-mid); line-height: 1.85; margin-bottom: 24px; border-left: 2px solid var(--f5); padding-left: 18px; }
+/* lightbox */
+.photo-lb {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(10,20,8,.96);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; padding: 40px 80px;
+}
+.photo-lb > img { max-width: 100%; max-height: 82vh; object-fit: contain; pointer-events: none; }
+.lb-label {
+  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 9px; letter-spacing: .32em;
+  color: rgba(192,222,160,.55); text-transform: uppercase; white-space: nowrap;
+}
+.lb-counter {
+  position: absolute; top: 28px; right: 36px;
+  font-family: var(--mono); font-size: 9px; letter-spacing: .2em;
+  color: rgba(192,222,160,.35); text-transform: uppercase;
+}
+.lb-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; pointer-events: auto;
+  color: rgba(192,222,160,.5); font-size: 52px; line-height: 1;
+  padding: 12px 20px; transition: color .2s; z-index: 1;
+}
+.lb-nav:hover { color: rgba(192,222,160,.95); }
+.lb-prev { left: 12px; }
+.lb-next { right: 12px; }
+
+/* description */
+.sl-desc { font-size: clamp(13px,1.45vw,15px); color: var(--ink-mid); line-height: 1.78; margin: 14px 0 22px; }
 
 /* highlights grid */
 .sl-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--fog); margin-bottom: 24px; }
@@ -177,7 +214,9 @@ html, body { height: 100%; font-family: var(--sans); background: var(--cream); c
   .wm { font-size: 90px; right: 16px; top: 16px; }
   .content-nav { padding: 11px 24px; }
   .sl-grid { grid-template-columns: repeat(2,1fr); }
-  .photo-cell { height: 110px; }
+  .photo-cell { height: 140px; }
+  .photo-lb { padding: 16px 48px; }
+  .lb-nav { font-size: 40px; padding: 10px 14px; }
   .hobby-cards { grid-template-columns: 1fr; }
   .fig-box { height: 160px; }
 }
